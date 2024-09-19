@@ -2,8 +2,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct ContentView: View {
-    @ObservedObject var viewModel: UserViewModel = UserViewModel() // Подключаем ViewModel
-    @State private var isLoading = true // Флаг для состояния загрузки
+    @ObservedObject var viewModel: UserViewModel = UserViewModel()
+    @State private var isLoading = true
     
     var body: some View {
         NavigationView {
@@ -15,16 +15,7 @@ struct ContentView: View {
                         .scaleEffect(1.5)
                 }
                 .onAppear {
-                    // Проверка на наличие авторизованного пользователя
-                    if Auth.auth().currentUser != nil {
-                        // Если пользователь авторизован, загружаем его роль
-                        viewModel.fetchUserRole {
-                            self.isLoading = false // Заканчиваем загрузку
-                        }
-                    } else {
-                        // Если пользователь не авторизован
-                        self.isLoading = false
-                    }
+                    checkAuthentication()
                 }
             } else {
                 VStack {
@@ -32,9 +23,9 @@ struct ContentView: View {
                         // Переход к нужному интерфейсу в зависимости от роли
                         if let role = viewModel.user?.role {
                             if role == "blogger" {
-                                BloggerDashboardView() // Экран для блогера
+                                BloggerTabView(userViewModel: viewModel) // Передаем правильный параметр userViewModel
                             } else {
-                                UserCoursesView() // Экран для обычного пользователя
+                                UserTabView(userViewModel: viewModel) // Интерфейс для пользователя с TabBar
                             }
                         }
                     } else {
@@ -44,7 +35,7 @@ struct ContentView: View {
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255)) // Мягкий красный цвет для названия
-                                .padding(.bottom, 30) // Отступ между заголовком и формой
+                                .padding(.bottom, 30)
                             
                             authSection
                                 .padding()
@@ -56,13 +47,20 @@ struct ContentView: View {
                     }
                 }
                 .navigationBarTitle("Добро пожаловать", displayMode: .inline)
-                .onAppear {
-                    // Проверяем, если пользователь уже авторизован при старте
-                    if Auth.auth().currentUser != nil {
-                        viewModel.fetchUserRole()
-                    }
-                }
             }
+        }
+    }
+    
+    // Проверка аутентификации пользователя
+    func checkAuthentication() {
+        if Auth.auth().currentUser != nil {
+            // Если пользователь авторизован, загружаем его роль
+            viewModel.fetchUserRole {
+                self.isLoading = false // Заканчиваем загрузку
+            }
+        } else {
+            // Если пользователь не авторизован
+            self.isLoading = false
         }
     }
     
