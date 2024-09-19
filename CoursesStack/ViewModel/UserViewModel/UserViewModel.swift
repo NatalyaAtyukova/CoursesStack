@@ -26,8 +26,9 @@ class UserViewModel: ObservableObject {
                         completion(error)
                     } else {
                         self.isAuthenticated = true
-                        self.fetchUserRole() // Загружаем данные пользователя
-                        completion(nil)
+                        self.fetchUserRole {
+                            completion(nil)
+                        }
                     }
                 }
             }
@@ -42,21 +43,29 @@ class UserViewModel: ObservableObject {
                 return
             }
             self.isAuthenticated = true
-            self.fetchUserRole() // Загружаем данные пользователя
-            completion(nil)
+            self.fetchUserRole {
+                completion(nil)
+            }
         }
     }
     
-    // Получение роли пользователя
-    func fetchUserRole() {
-        guard let userID = auth.currentUser?.uid else { return }
+    // Получение роли пользователя с замыканием
+    func fetchUserRole(completion: @escaping () -> Void = {}) {
+        guard let userID = auth.currentUser?.uid else {
+            completion() // Если пользователь не найден, вызываем завершение
+            return
+        }
         
         db.collection("users").document(userID).getDocument { snapshot, error in
             if let data = snapshot?.data() {
                 let email = data["email"] as? String ?? ""
                 let role = data["role"] as? String ?? "user"
                 self.user = UserModel(id: userID, email: email, role: role)
+                self.isAuthenticated = true
+            } else {
+                self.isAuthenticated = false
             }
+            completion() // Вызываем завершение после получения данных
         }
     }
 }

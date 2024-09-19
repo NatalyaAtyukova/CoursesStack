@@ -35,7 +35,7 @@ class CourseViewModel: ObservableObject {
 
     // Сохранение курса в Firestore
     func saveCourse() {  // Убираем модификатор private
-        guard let userID = Auth.auth().currentUser?.uid else { return }
+        guard (Auth.auth().currentUser?.uid) != nil else { return }
         let courseData = [
             "title": course.title,
             "description": course.description,
