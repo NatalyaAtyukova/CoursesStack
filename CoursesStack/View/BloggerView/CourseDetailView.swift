@@ -9,142 +9,210 @@ struct CourseDetailView: View {
     @State private var showingAddBranch = false
 
     var body: some View {
-        VStack {
-            if isEditing {
-                // Поля для редактирования курса
-                TextField("Название", text: $newTitle)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                TextField("Описание", text: $newDescription)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                TextField("Цена", text: $newPrice)
-                    .keyboardType(.decimalPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                HStack {
-                    Button(action: {
-                        if let price = Double(newPrice) {
-                            viewModel.updateCourse(title: newTitle, description: newDescription, price: price)
-                            isEditing = false
-                        }
-                    }) {
-                        Text("Сохранить")
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    
-                    Button(action: {
-                        isEditing = false
-                    }) {
-                        Text("Отменить")
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if isEditing {
+                    editingSection
+                } else {
+                    courseDetailSection
                 }
-                .padding()
-            } else {
-                // Отображение деталей курса
-                AsyncImage(url: URL(string: viewModel.course.coverImageURL)) { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 200)
-                } placeholder: {
-                    ProgressView()
-                }
-                
-                Text(viewModel.course.title)
-                    .font(.largeTitle)
-                    .padding()
-                
-                Text(viewModel.course.description)
-                    .font(.body)
-                    .padding()
-                
-                Text("Цена: \(viewModel.course.price, specifier: "%.2f") руб.")
-                    .font(.title2)
-                    .padding()
-
-                // Список веток и уроков
-                List(viewModel.course.branches) { branch in
-                    Section(header: Text(branch.title)) {
-                        ForEach(branch.lessons) { lesson in
-                            Text(lesson.title)
-                        }
-                    }
-                }
-
-                // Кнопка для добавления веток
-                Button(action: {
-                    showingAddBranch.toggle()
-                }) {
-                    Text("Добавить ветку")
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .sheet(isPresented: $showingAddBranch) {
-                    AddBranchView(viewModel: viewModel) // Передаем правильный ViewModel
-                }
-                .padding()
-
-                Spacer()
-
-                // Кнопки для редактирования и удаления курса
-                HStack {
-                    Button(action: {
-                        // Включаем режим редактирования
-                        newTitle = viewModel.course.title
-                        newDescription = viewModel.course.description
-                        newPrice = "\(viewModel.course.price)"
-                        isEditing = true
-                    }) {
-                        Text("Редактировать")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    
-                    Button(action: {
-                        viewModel.deleteCourse()
-                    }) {
-                        Text("Удалить")
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                }
-                .padding()
+                actionButtons
             }
+            .padding()
         }
         .navigationTitle("Управление курсом")
+        .background(Color(UIColor.systemGroupedBackground))
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
         }
         .fullScreenCover(isPresented: $viewModel.isDeleted) {
-            VStack {
-                Text("Курс был успешно удален.")
-                    .font(.headline)
-                    .padding()
-                Button("Вернуться назад") {
-                    // Логика для перехода на предыдущий экран
-                }
+            deletionScreen
+        }
+    }
+    
+    // Section for editing the course details
+    private var editingSection: some View {
+        VStack(spacing: 16) {
+            TextField("Название", text: $newTitle)
                 .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(10)
+                .shadow(radius: 2)
+            
+            TextField("Описание", text: $newDescription)
+                .padding()
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(10)
+                .shadow(radius: 2)
+            
+            TextField("Цена", text: $newPrice)
+                .keyboardType(.decimalPad)
+                .padding()
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(10)
+                .shadow(radius: 2)
+            
+            HStack {
+                Button(action: {
+                    if let price = Double(newPrice) {
+                        viewModel.updateCourse(title: newTitle, description: newDescription, price: price)
+                        isEditing = false
+                    }
+                }) {
+                    Text("Сохранить")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
+                }
+                
+                Button(action: {
+                    isEditing = false
+                }) {
+                    Text("Отменить")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
+                }
             }
+        }
+    }
+    
+    // Section for displaying course details
+    private var courseDetailSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if let imageURL = URL(string: viewModel.course.coverImageURL) {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    case .failure:
+                        Image(systemName: "exclamationmark.triangle")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
+                            .cornerRadius(10)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+            }
+            
+            Text(viewModel.course.title)
+                .font(.title)
+                .fontWeight(.bold)
+                .lineLimit(2)
+                .padding(.top, 8)
+            
+            Text(viewModel.course.description)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .lineLimit(4)
+            
+            Text("Цена: \(viewModel.course.price, specifier: "%.2f") руб.")
+                .font(.title2)
+                .foregroundColor(.green)
+                .padding(.top, 8)
+            
+            Divider()
+            
+            Text("Шаги курса")
+                .font(.headline)
+                .padding(.bottom, 8)
+            
+            if !viewModel.course.branches.isEmpty {
+                ForEach(viewModel.course.branches) { branch in
+                    BranchCard(
+                        branch: branch,
+                        isCompleted: viewModel.course.completedBranches[branch.id] ?? false,
+                        description: branch.description // Добавлен вызов описания ветки курса
+                    )
+                }
+            } else {
+                Text("Нет доступных веток курса")
+                    .font(.body)
+                    .foregroundColor(.gray)
+            }
+            
+            addBranchButton
+        }
+    }
+    
+    // Buttons for editing and deleting the course
+    private var actionButtons: some View {
+        HStack(spacing: 16) {
+            Button(action: {
+                newTitle = viewModel.course.title
+                newDescription = viewModel.course.description
+                newPrice = "\(viewModel.course.price)"
+                isEditing = true
+            }) {
+                Text("Редактировать")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 2)
+            }
+            
+            Button(action: {
+                viewModel.deleteCourse()
+            }) {
+                Text("Удалить")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 2)
+            }
+        }
+    }
+    
+    // Button to add a new branch
+    private var addBranchButton: some View {
+        Button(action: {
+            showingAddBranch.toggle()
+        }) {
+            Text("Добавить ветку")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .shadow(radius: 2)
+        }
+        .sheet(isPresented: $showingAddBranch) {
+            AddBranchView(viewModel: viewModel)
+        }
+    }
+    
+    // Screen displayed after course deletion
+    private var deletionScreen: some View {
+        VStack {
+            Text("Курс был успешно удален.")
+                .font(.headline)
+                .padding()
+            Button("Вернуться назад") {
+                // Логика для перехода на предыдущий экран
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(10)
         }
     }
 }

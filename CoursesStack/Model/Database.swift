@@ -24,6 +24,25 @@ struct Course: Identifiable {
     var branches: [CourseBranch]
     var quizzes: [Quiz]
     var reviews: [Review] // Добавляем отзывы в курс
+    // Добавляем свойство для отслеживания завершенных веток
+    var completedBranches: [String: Bool] = [:]
+    
+    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, branches: [CourseBranch], quizzes: [Quiz], reviews: [Review]) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.price = price
+        self.coverImageURL = coverImageURL
+        self.authorID = authorID
+        self.branches = branches
+        self.quizzes = quizzes
+        self.reviews = reviews
+        
+        // Инициализация completedBranches
+        for branch in branches {
+            self.completedBranches[branch.id] = false
+        }
+    }
 }
 
 //Blogger добавляет курсы

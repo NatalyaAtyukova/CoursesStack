@@ -32,26 +32,27 @@ class BloggerDashboardViewModel: ObservableObject {
                             coverImageURL: data["coverImageURL"] as? String ?? "",
                             authorID: data["authorID"] as? String ?? "",
                             branches: data["branches"] as? [CourseBranch] ?? [], // Пустой массив по умолчанию
-                            quizzes: data["quizzes"] as? [Quiz] ?? [], reviews: [] // Пустой массив по умолчанию
+                            quizzes: data["quizzes"] as? [Quiz] ?? [],
+                            reviews: [] // Пустой массив отзывов
                         )
                     }
                 }
             }
     }
     
-    // Создание нового курса
-    func createCourse(title: String, description: String, price: Double) {
+    // Создание нового курса с URL изображения обложки
+    func createCourse(title: String, description: String, price: Double, coverImageURL: String) {
         guard let userID = userID else { return }
         
         let newCourse = [
             "title": title,
             "description": description,
             "price": price,
-            "coverImageURL": "", // Загрузить изображение отдельно
+            "coverImageURL": coverImageURL, // Сохранение URL изображения
             "authorID": userID,
             "branches": [], // Пустой массив веток
             "quizzes": [],
-            "rewiews": []// Пустой массив тестов
+            "reviews": [] // Пустой массив отзывов
         ] as [String : Any]
         
         db.collection("courses").addDocument(data: newCourse) { error in
