@@ -14,6 +14,8 @@ struct CreateCourseView: View {
     @State private var isUploading = false
     @State private var uploadProgress: Double = 0
     @State private var coverImageURL = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack(spacing: 16) {
@@ -79,11 +81,21 @@ struct CreateCourseView: View {
         .sheet(isPresented: $isImagePickerPresented) {
             ImagePicker(image: $coverImage)
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Ошибка"), message: Text(alertMessage), dismissButton: .default(Text("ОК")))
+        }
     }
     
     func createCourse() {
+        guard !title.isEmpty, !description.isEmpty, !price.isEmpty else {
+            alertMessage = "Заполните все поля!"
+            showAlert = true
+            return
+        }
+        
         guard let image = coverImage, let coursePrice = Double(price) else {
-            // Показываем ошибку, если изображение не выбрано или цена некорректна
+            alertMessage = "Пожалуйста, выберите изображение обложки и укажите корректную цену!"
+            showAlert = true
             return
         }
         
@@ -92,6 +104,9 @@ struct CreateCourseView: View {
             if let url = url {
                 viewModel.createCourse(title: title, description: description, price: coursePrice, coverImageURL: url.absoluteString)
                 presentationMode.wrappedValue.dismiss()
+            } else {
+                alertMessage = "Не удалось загрузить изображение. Пожалуйста, попробуйте ещё раз."
+                showAlert = true
             }
             isUploading = false
         }

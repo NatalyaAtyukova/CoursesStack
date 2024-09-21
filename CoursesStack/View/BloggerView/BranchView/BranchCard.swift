@@ -4,6 +4,7 @@ struct BranchCard: View {
     var branch: CourseBranch
     var isCompleted: Bool
     var description: String  // Добавляем описание курса
+    var onLessonTap: (Lesson) -> Void // Замыкание для обработки нажатия на урок
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -22,13 +23,23 @@ struct BranchCard: View {
                     .foregroundColor(.secondary)
                     .lineLimit(3)  // Ограничение по количеству строк, можно настроить
 
-                ForEach(branch.lessons) { lesson in
-                    HStack {
-                        Image(systemName: "circle")
-                            .foregroundColor(.gray)
-                        Text(lesson.title)
-                            .font(.body)
-                        Spacer()
+                // Проверка на наличие уроков в ветке
+                if branch.lessons.isEmpty {
+                    Text("Нет уроков")
+                        .font(.body)
+                        .foregroundColor(.gray)
+                } else {
+                    ForEach(branch.lessons) { lesson in
+                        HStack {
+                            Image(systemName: "circle")
+                                .foregroundColor(.gray)
+                            Text(lesson.title)
+                                .font(.body)
+                            Spacer()
+                        }
+                        .onTapGesture {
+                            onLessonTap(lesson) // Обработка нажатия на урок
+                        }
                     }
                 }
                 
@@ -39,4 +50,3 @@ struct BranchCard: View {
         .padding(.horizontal)
     }
 }
-

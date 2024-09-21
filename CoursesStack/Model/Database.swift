@@ -22,12 +22,11 @@ struct Course: Identifiable {
     var coverImageURL: String
     var authorID: String
     var branches: [CourseBranch]
-    var quizzes: [Quiz]
     var reviews: [Review] // Добавляем отзывы в курс
     // Добавляем свойство для отслеживания завершенных веток
     var completedBranches: [String: Bool] = [:]
     
-    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, branches: [CourseBranch], quizzes: [Quiz], reviews: [Review]) {
+    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, branches: [CourseBranch], reviews: [Review]) {
         self.id = id
         self.title = title
         self.description = description
@@ -35,7 +34,6 @@ struct Course: Identifiable {
         self.coverImageURL = coverImageURL
         self.authorID = authorID
         self.branches = branches
-        self.quizzes = quizzes
         self.reviews = reviews
         
         // Инициализация completedBranches
@@ -57,20 +55,25 @@ struct CourseBranch: Identifiable {
 struct Lesson: Identifiable {
     var id: String
     var title: String
-    var content: String
+    var content: String // Текстовый контент
+    var videoURL: String? // Ссылка на видео (например, YouTube)
+    var assignments: [Assignment] // Задания и тесты
+    var downloadableFiles: [DownloadableFile] // Файлы для скачивания
+    
 }
 
-struct Quiz: Identifiable {
+struct Assignment: Identifiable {
     var id: String
-    var title: String
-    var questions: [Question]
+    var question: String
+    var options: [String]? // Варианты ответа (если применимо)
+    var correctAnswer: String? // Правильный ответ (если применимо)
+    var isMultipleChoice: Bool // Флаг для типа теста (множественный выбор или свободный ответ)
 }
 
-struct Question: Identifiable {
+struct DownloadableFile: Identifiable {
     var id: String
-    var questionText: String
-    var answers: [String]
-    var correctAnswerIndex: Int
+    var fileName: String
+    var fileURL: String // Ссылка на файл для скачивания
 }
 
 // Отзывы оставляет User

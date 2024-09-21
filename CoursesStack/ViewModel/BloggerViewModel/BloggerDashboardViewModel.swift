@@ -32,7 +32,6 @@ class BloggerDashboardViewModel: ObservableObject {
                             coverImageURL: data["coverImageURL"] as? String ?? "",
                             authorID: data["authorID"] as? String ?? "",
                             branches: data["branches"] as? [CourseBranch] ?? [], // Пустой массив по умолчанию
-                            quizzes: data["quizzes"] as? [Quiz] ?? [],
                             reviews: [] // Пустой массив отзывов
                         )
                     }
@@ -51,7 +50,6 @@ class BloggerDashboardViewModel: ObservableObject {
             "coverImageURL": coverImageURL, // Сохранение URL изображения
             "authorID": userID,
             "branches": [], // Пустой массив веток
-            "quizzes": [],
             "reviews": [] // Пустой массив отзывов
         ] as [String : Any]
         

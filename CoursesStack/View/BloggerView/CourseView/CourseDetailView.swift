@@ -7,6 +7,8 @@ struct CourseDetailView: View {
     @State private var newDescription = ""
     @State private var newPrice = ""
     @State private var showingAddBranch = false
+    @State private var showingAddLesson = false
+    @State private var selectedBranchID: String?
 
     var body: some View {
         ScrollView {
@@ -30,7 +32,7 @@ struct CourseDetailView: View {
         }
     }
     
-    // Section for editing the course details
+    // Раздел для редактирования деталей курса
     private var editingSection: some View {
         VStack(spacing: 16) {
             TextField("Название", text: $newTitle)
@@ -83,7 +85,7 @@ struct CourseDetailView: View {
         }
     }
     
-    // Section for displaying course details
+    // Раздел для отображения деталей курса
     private var courseDetailSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let imageURL = URL(string: viewModel.course.coverImageURL) {
@@ -134,11 +136,45 @@ struct CourseDetailView: View {
             
             if !viewModel.course.branches.isEmpty {
                 ForEach(viewModel.course.branches) { branch in
-                    BranchCard(
-                        branch: branch,
-                        isCompleted: viewModel.course.completedBranches[branch.id] ?? false,
-                        description: branch.description // Добавлен вызов описания ветки курса
-                    )
+                    VStack(alignment: .leading, spacing: 10) {
+                        BranchCard(
+                            branch: branch,
+                            isCompleted: viewModel.course.completedBranches[branch.id] ?? false,
+                            description: branch.description,
+                            onLessonTap: { lesson in
+                                // Логика для обработки нажатия на урок
+                                viewModel.openLesson(lesson)
+                            }
+                        )
+                        
+                        // Отображение уроков для ветки
+                        Text("Уроки:")
+                            .font(.subheadline)
+                            .padding(.top, 8)
+                        
+                        ForEach(branch.lessons) { lesson in
+                            LessonCard(lesson: lesson)
+                        }
+                        
+                        // Кнопка для добавления урока в конкретную ветку
+                        Button(action: {
+                            selectedBranchID = branch.id
+                            showingAddLesson.toggle()
+                        }) {
+                            Text("Добавить урок")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 2)
+                        }
+                        .sheet(isPresented: $showingAddLesson) {
+                            if let branchID = selectedBranchID {
+                                AddLessonView(branchID: branchID, viewModel: viewModel)
+                            }
+                        }
+                    }
                 }
             } else {
                 Text("Нет доступных веток курса")
@@ -150,7 +186,7 @@ struct CourseDetailView: View {
         }
     }
     
-    // Buttons for editing and deleting the course
+    // Кнопки для редактирования и удаления курса
     private var actionButtons: some View {
         HStack(spacing: 16) {
             Button(action: {
@@ -182,7 +218,7 @@ struct CourseDetailView: View {
         }
     }
     
-    // Button to add a new branch
+    // Кнопка для добавления новой ветки
     private var addBranchButton: some View {
         Button(action: {
             showingAddBranch.toggle()
@@ -200,7 +236,7 @@ struct CourseDetailView: View {
         }
     }
     
-    // Screen displayed after course deletion
+    // Экран, отображаемый после удаления курса
     private var deletionScreen: some View {
         VStack {
             Text("Курс был успешно удален.")
