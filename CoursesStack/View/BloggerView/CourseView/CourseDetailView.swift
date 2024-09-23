@@ -9,6 +9,10 @@ struct CourseDetailView: View {
     @State private var showingAddBranch = false
     @State private var showingAddLesson = false
     @State private var selectedBranchID: String?
+    
+    // Добавляем состояние для выбранного урока и показа LessonDetailView
+    @State private var selectedLesson: Lesson?
+    @State private var showingLessonDetail = false
 
     var body: some View {
         ScrollView {
@@ -30,6 +34,10 @@ struct CourseDetailView: View {
         .fullScreenCover(isPresented: $viewModel.isDeleted) {
             deletionScreen
         }
+        // Переход на LessonDetailView через модальное окно (sheet)
+        .sheet(item: $selectedLesson) { lesson in
+            LessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
+        }
     }
     
     // Раздел для редактирования деталей курса
@@ -40,20 +48,20 @@ struct CourseDetailView: View {
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+
             TextField("Описание", text: $newDescription)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+
             TextField("Цена", text: $newPrice)
                 .keyboardType(.decimalPad)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+
             HStack {
                 Button(action: {
                     if let price = Double(newPrice) {
@@ -69,7 +77,7 @@ struct CourseDetailView: View {
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
-                
+
                 Button(action: {
                     isEditing = false
                 }) {
@@ -84,7 +92,7 @@ struct CourseDetailView: View {
             }
         }
     }
-    
+
     // Раздел для отображения деталей курса
     private var courseDetailSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -142,8 +150,8 @@ struct CourseDetailView: View {
                             isCompleted: viewModel.course.completedBranches[branch.id] ?? false,
                             description: branch.description,
                             onLessonTap: { lesson in
-                                // Логика для обработки нажатия на урок
-                                viewModel.openLesson(lesson)
+                                selectedLesson = lesson // Сохраняем выбранный урок
+                                showingLessonDetail = true // Показываем LessonDetailView
                             }
                         )
                         
@@ -154,6 +162,10 @@ struct CourseDetailView: View {
                         
                         ForEach(branch.lessons) { lesson in
                             LessonCard(lesson: lesson)
+                                .onTapGesture {
+                                    selectedLesson = lesson // Сохраняем выбранный урок
+                                    showingLessonDetail = true // Показываем LessonDetailView
+                                }
                         }
                         
                         // Кнопка для добавления урока в конкретную ветку

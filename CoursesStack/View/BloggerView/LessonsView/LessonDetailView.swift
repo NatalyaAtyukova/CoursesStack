@@ -125,3 +125,23 @@ struct LessonDetailView: View {
         }
     }
 }
+
+struct LessonDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Создаем тестовый урок для предварительного просмотра с учетом новых параметров
+        let testLesson = Lesson(
+            id: "1",
+            title: "Тестовый урок",
+            content: "Текст урока для предварительного просмотра",
+            videoURL: "https://example.com/video.mp4",
+            assignments: [],
+            downloadableFiles: [] // Пустой массив файлов для теста
+        )
+        
+        let testCourseService = CourseService() // Инициализация тестового экземпляра сервиса курса
+        
+        let viewModel = LessonDetailViewModel(lesson: testLesson, courseService: testCourseService)
+        
+        return LessonDetailView(viewModel: viewModel)
+    }
+}
