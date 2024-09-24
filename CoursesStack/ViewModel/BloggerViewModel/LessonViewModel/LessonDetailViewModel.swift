@@ -5,29 +5,31 @@ class LessonDetailViewModel: ObservableObject {
     @Published var lesson: Lesson
     @Published var errorMessage: String?
     @Published var isDeleted = false
-
+    @Published var isUpdated = false // Для отслеживания успешного обновления
+    
     private var cancellables = Set<AnyCancellable>()
-    private let courseService: CourseService // Предположим, что существует сервис для работы с курсами
+    private let courseService: CourseService // Сервис для работы с курсами
     
     init(lesson: Lesson, courseService: CourseService) {
         self.lesson = lesson
         self.courseService = courseService
     }
     
-    // Обновление урока
-    func updateLesson(content: String, videoURL: String?) {
+    // Обновление урока, включая задания
+    func updateLesson(content: String, videoURL: String?, assignments: [Assignment]) {
         // Обновляем локальные данные
         lesson.content = content
         lesson.videoURL = videoURL
-
-        // Обновляем на сервере (например, через Firebase или другой сервис)
+        lesson.assignments = assignments
+        
+        // Обновляем на сервере
         courseService.updateLesson(lesson)
             .sink { completion in
                 switch completion {
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
                 case .finished:
-                    break
+                    self.isUpdated = true // Уведомляем об успешном обновлении
                 }
             } receiveValue: { _ in
                 // Успешно обновлено
@@ -43,10 +45,10 @@ class LessonDetailViewModel: ObservableObject {
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
                 case .finished:
-                    self.isDeleted = true
+                    self.isDeleted = true // Урок успешно удален
                 }
             } receiveValue: { _ in
-                // Урок успешно удален
+                // Успешное удаление
             }
             .store(in: &cancellables)
     }

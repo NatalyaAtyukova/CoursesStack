@@ -19,14 +19,16 @@ class CourseDetailViewModel: ObservableObject {
         saveCourse() // Сохраняем курс с добавленной веткой
     }
     
-    func addLesson(to branchID: String, title: String, content: String) {
+    // Добавление урока в ветку с новыми параметрами
+    func addLesson(to branchID: String, title: String, content: String, videoURL: String?, assignments: [Assignment], downloadableFiles: [DownloadableFile]) {
         if let branchIndex = course.branches.firstIndex(where: { $0.id == branchID }) {
             let newLesson = Lesson(
                 id: UUID().uuidString,
                 title: title,
                 content: content,
-                assignments: [], // Добавляем пустой массив или передаём данные для заданий
-                downloadableFiles: [] // Добавляем пустой массив или передаём данные для файлов
+                videoURL: videoURL, // Передаем videoURL, если оно есть
+                assignments: assignments, // Передаем список заданий
+                downloadableFiles: downloadableFiles // Передаем файлы для скачивания
             )
             course.branches[branchIndex].lessons.append(newLesson)
             saveCourse() // Сохраняем курс с добавленным уроком

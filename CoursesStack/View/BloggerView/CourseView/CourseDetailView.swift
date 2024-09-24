@@ -10,23 +10,26 @@ struct CourseDetailView: View {
     @State private var showingAddLesson = false
     @State private var selectedBranchID: String?
     
-    // Добавляем состояние для выбранного урока и показа LessonDetailView
     @State private var selectedLesson: Lesson?
     @State private var showingLessonDetail = false
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .center, spacing: 20) {
                 if isEditing {
                     editingSection
                 } else {
                     courseDetailSection
                 }
-                actionButtons
+                
+                if !isEditing {
+                    actionButtons
+                }
             }
             .padding()
         }
         .navigationTitle("Управление курсом")
+        .navigationBarTitleDisplayMode(.inline)  // Используем встроенный заголовок для уменьшения отступа
         .background(Color(UIColor.systemGroupedBackground))
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
@@ -34,13 +37,11 @@ struct CourseDetailView: View {
         .fullScreenCover(isPresented: $viewModel.isDeleted) {
             deletionScreen
         }
-        // Переход на LessonDetailView через модальное окно (sheet)
         .sheet(item: $selectedLesson) { lesson in
             LessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
         }
     }
-    
-    // Раздел для редактирования деталей курса
+
     private var editingSection: some View {
         VStack(spacing: 16) {
             TextField("Название", text: $newTitle)
@@ -93,9 +94,8 @@ struct CourseDetailView: View {
         }
     }
 
-    // Раздел для отображения деталей курса
     private var courseDetailSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             if let imageURL = URL(string: viewModel.course.coverImageURL) {
                 AsyncImage(url: imageURL) { phase in
                     switch phase {
@@ -104,10 +104,12 @@ struct CourseDetailView: View {
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFit()
+                            .scaledToFill()
                             .frame(height: 200)
                             .cornerRadius(10)
+                            .clipped()
                             .shadow(radius: 5)
+                            .frame(maxWidth: .infinity)
                     case .failure:
                         Image(systemName: "exclamationmark.triangle")
                             .resizable()
@@ -119,17 +121,20 @@ struct CourseDetailView: View {
                     }
                 }
             }
-            
+
             Text(viewModel.course.title)
                 .font(.title)
                 .fontWeight(.bold)
+                .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .padding(.top, 8)
             
             Text(viewModel.course.description)
                 .font(.body)
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
                 .lineLimit(4)
+                .padding(.bottom, 8)
             
             Text("Цена: \(viewModel.course.price, specifier: "%.2f") руб.")
                 .font(.title2)
@@ -150,12 +155,11 @@ struct CourseDetailView: View {
                             isCompleted: viewModel.course.completedBranches[branch.id] ?? false,
                             description: branch.description,
                             onLessonTap: { lesson in
-                                selectedLesson = lesson // Сохраняем выбранный урок
-                                showingLessonDetail = true // Показываем LessonDetailView
+                                selectedLesson = lesson
+                                showingLessonDetail = true
                             }
                         )
-                        
-                        // Отображение уроков для ветки
+
                         Text("Уроки:")
                             .font(.subheadline)
                             .padding(.top, 8)
@@ -163,12 +167,11 @@ struct CourseDetailView: View {
                         ForEach(branch.lessons) { lesson in
                             LessonCard(lesson: lesson)
                                 .onTapGesture {
-                                    selectedLesson = lesson // Сохраняем выбранный урок
-                                    showingLessonDetail = true // Показываем LessonDetailView
+                                    selectedLesson = lesson
+                                    showingLessonDetail = true
                                 }
                         }
                         
-                        // Кнопка для добавления урока в конкретную ветку
                         Button(action: {
                             selectedBranchID = branch.id
                             showingAddLesson.toggle()
@@ -197,8 +200,7 @@ struct CourseDetailView: View {
             addBranchButton
         }
     }
-    
-    // Кнопки для редактирования и удаления курса
+
     private var actionButtons: some View {
         HStack(spacing: 16) {
             Button(action: {
@@ -228,9 +230,9 @@ struct CourseDetailView: View {
                     .shadow(radius: 2)
             }
         }
+        .padding(.top, 16)
     }
     
-    // Кнопка для добавления новой ветки
     private var addBranchButton: some View {
         Button(action: {
             showingAddBranch.toggle()
@@ -247,8 +249,7 @@ struct CourseDetailView: View {
             AddBranchView(viewModel: viewModel)
         }
     }
-    
-    // Экран, отображаемый после удаления курса
+
     private var deletionScreen: some View {
         VStack {
             Text("Курс был успешно удален.")

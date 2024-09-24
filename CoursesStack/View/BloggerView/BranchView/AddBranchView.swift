@@ -7,13 +7,27 @@ struct AddBranchView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Group {
-                TextField("Название ветки", text: $branchTitle)
-                TextField("Описание ветки", text: $branchDescription)
-            }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(.horizontal)
+            // Поле для ввода названия ветки
+            TextField("Название ветки", text: $branchTitle)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
             
+            // Текстовый редактор для описания ветки
+            VStack(alignment: .leading) {
+                Text("Описание ветки")
+                    .font(.headline)
+                    .padding(.horizontal)
+                
+                TextEditor(text: $branchDescription)
+                    .frame(height: 150) // Устанавливаем высоту редактора
+                    .padding(.horizontal)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+            }
+            
+            // Кнопка для добавления ветки
             Button(action: {
                 viewModel.addBranch(title: branchTitle, description: branchDescription)
             }) {

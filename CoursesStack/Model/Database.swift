@@ -62,18 +62,27 @@ struct Lesson: Identifiable {
     
 }
 
-struct Assignment: Identifiable {
-    var id: String
-    var question: String
-    var options: [String]? // Варианты ответа (если применимо)
-    var correctAnswer: String? // Правильный ответ (если применимо)
-    var isMultipleChoice: Bool // Флаг для типа теста (множественный выбор или свободный ответ)
+// Пример структуры задания
+enum AssignmentType: String, CaseIterable {
+    case multipleChoice = "multipleChoice"
+    case textAnswer = "textAnswer"
 }
 
+struct Assignment: Identifiable {
+    var id: String
+    var title: String
+    var type: AssignmentType // Тип задания
+    var choices: [String] // Варианты ответов для multipleChoice
+    var correctAnswer: String // Правильный ответ
+}
+
+
+
+// Пример структуры файла для скачивания
 struct DownloadableFile: Identifiable {
     var id: String
     var fileName: String
-    var fileURL: String // Ссылка на файл для скачивания
+    var fileURL: String
 }
 
 // Отзывы оставляет User

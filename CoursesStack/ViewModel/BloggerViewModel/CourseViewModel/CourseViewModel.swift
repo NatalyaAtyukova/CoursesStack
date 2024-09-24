@@ -5,7 +5,7 @@ class CourseViewModel: ObservableObject {
     @Published var course: Course
     @Published var errorMessage: AlertMessage?
     private let db = Firestore.firestore()
-
+    
     init(course: Course) {
         self.course = course
     }
@@ -45,7 +45,7 @@ class CourseViewModel: ObservableObject {
         course.reviews.append(newReview)
         saveCourse()
     }
-
+    
     // Сохранение курса в Firestore
     func saveCourse() {
         guard let userID = Auth.auth().currentUser?.uid else {
@@ -60,13 +60,16 @@ class CourseViewModel: ObservableObject {
             "price": course.price,
             "coverImageURL": course.coverImageURL,
             "authorID": course.authorID,
-            "branches": course.branches.map { $0.toDict() },
-            "reviews": course.reviews.map { $0.toDict() }
+            "branches": course.branches.map { $0.toDict() }, // Преобразование веток в массив словарей
+            "reviews": course.reviews.map { $0.toDict() } // Преобразование отзывов в массив словарей
         ]
         
+        // Сохранение данных в Firestore
         db.collection("courses").document(course.id).setData(courseData) { error in
             if let error = error {
                 self.errorMessage = AlertMessage(message: "Ошибка сохранения курса: \(error.localizedDescription)")
+            } else {
+                print("Курс успешно сохранен!")
             }
         }
     }
@@ -92,8 +95,8 @@ extension Lesson {
             "title": title,
             "content": content,
             "videoURL": videoURL ?? "", // Сохранение URL видео, если есть
-            "assignments": assignments, // Преобразование заданий в массив строк
-            "downloadableFiles": downloadableFiles // Файлы для скачивания
+            "assignments": assignments.map { $0.toDict() }, // Преобразование заданий в массив словарей
+            "downloadableFiles": downloadableFiles.map { $0.toDict() } // Преобразование файлов для скачивания в массив словарей
         ]
     }
 }
@@ -106,6 +109,29 @@ extension Review {
             "userID": userID,
             "content": content,
             "rating": rating
+        ]
+    }
+}
+
+extension Assignment {
+    func toDict() -> [String: Any] {
+        return [
+            "id": id,
+            "title": title,
+            "type": type.rawValue, // Преобразуем тип в строку
+            "choices": choices, // Firestore поддерживает массивы строк
+            "correctAnswer": correctAnswer
+        ]
+    }
+}
+
+// Преобразование в словарь для Firestore
+extension DownloadableFile {
+    func toDict() -> [String: Any] {
+        return [
+            "id": id,
+            "fileName": fileName,
+            "fileURL": fileURL
         ]
     }
 }

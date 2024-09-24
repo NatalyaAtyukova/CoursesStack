@@ -22,18 +22,21 @@ struct CreateCourseView: View {
             Group {
                 TextField("Название курса", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
                 
                 TextEditor(text: $description)
-                    .frame(height: 200)
-                    .padding(8)
+                    .frame(height: 250)  // Увеличенное поле для описания
+                    .padding(12)
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(UIColor.systemGray3), lineWidth: 1))
+                    .padding(.horizontal)
                 
                 TextField("Цена курса", text: $price)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
                 
                 Button(action: {
                     isImagePickerPresented = true
@@ -42,9 +45,10 @@ struct CreateCourseView: View {
                         Image(uiImage: coverImage)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
+                            .frame(width: 200, height: 200)  // Увеличенный размер изображения
                             .clipped()
                             .cornerRadius(8)
+                            .padding(.horizontal)
                     } else {
                         Text("Выберите изображение обложки")
                             .frame(maxWidth: .infinity)
@@ -52,10 +56,10 @@ struct CreateCourseView: View {
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
+                            .padding(.horizontal)
                     }
                 }
             }
-            .padding(.horizontal)
             
             if isUploading {
                 ProgressView(value: uploadProgress)
