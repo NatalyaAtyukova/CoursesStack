@@ -8,20 +8,27 @@ class UserViewModel: ObservableObject {
     private let auth = Auth.auth()
     private let db = Firestore.firestore()
     
-    // Регистрация с ролью
-    func register(email: String, password: String, role: String, completion: @escaping (Error?) -> Void) {
+    // Регистрация с ролью и именем автора
+    func register(email: String, password: String, role: String, authorName: String?, completion: @escaping (Error?) -> Void) {
         auth.createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 completion(error)
                 return
             }
             
-            // Сохранение пользователя с ролью в Firestore
+            // Сохранение пользователя с ролью и (опционально) именем автора в Firestore
             if let userID = result?.user.uid {
-                self.db.collection("users").document(userID).setData([
+                var userData: [String: Any] = [
                     "email": email,
                     "role": role
-                ]) { error in
+                ]
+                
+                // Если роль "blogger", добавляем имя автора
+                if role == "blogger", let authorName = authorName {
+                    userData["name"] = authorName
+                }
+                
+                self.db.collection("users").document(userID).setData(userData) { error in
                     if let error = error {
                         completion(error)
                     } else {
@@ -60,7 +67,8 @@ class UserViewModel: ObservableObject {
             if let data = snapshot?.data() {
                 let email = data["email"] as? String ?? ""
                 let role = data["role"] as? String ?? "user"
-                self.user = UserModel(id: userID, email: email, role: role)
+                let authorName = data["name"] as? String ?? "" // Загружаем имя автора, если оно есть
+                self.user = UserModel(id: userID, email: email, role: role, authorName: authorName)
                 self.isAuthenticated = true
             } else {
                 self.isAuthenticated = false

@@ -6,6 +6,7 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var selectedRole = "user" // По умолчанию роль пользователя
+    @State private var authorName = "" // Имя автора для роли "blogger"
     @State private var errorMessage = ""
     
     var body: some View {
@@ -44,6 +45,17 @@ struct RegisterView: View {
                 .background(Color(red: 235/255, green: 64/255, blue: 52/255).opacity(0.8)) // Мягкий красный для выбора роли
                 .cornerRadius(8)
                 
+                // Поле для имени автора, отображается только если роль "blogger"
+                if selectedRole == "blogger" {
+                    TextField("Имя автора", text: $authorName)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding()
+                        .background(Color(white: 0.9)) // Светлый серый фон для текстовых полей
+                        .cornerRadius(8)
+                        .foregroundColor(.black)
+                        .autocapitalization(.words)
+                }
+                
                 Button(action: register) {
                     Text("Регистрация")
                         .fontWeight(.bold)
@@ -68,7 +80,8 @@ struct RegisterView: View {
     }
     
     func register() {
-        viewModel.register(email: email, password: password, role: selectedRole) { error in
+        // Передаем authorName только если роль "blogger"
+        viewModel.register(email: email, password: password, role: selectedRole, authorName: selectedRole == "blogger" ? authorName : nil) { error in
             if let error = error {
                 self.errorMessage = error.localizedDescription
             }

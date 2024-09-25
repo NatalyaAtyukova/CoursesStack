@@ -9,6 +9,7 @@ struct CreateCourseView: View {
     @State private var title = ""
     @State private var description = ""
     @State private var price = ""
+    @State private var selectedCurrency = "USD" // Валюта по умолчанию
     @State private var coverImage: UIImage?
     @State private var isImagePickerPresented = false
     @State private var isUploading = false
@@ -17,6 +18,10 @@ struct CreateCourseView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
+    // Пример ID и имени автора (получаются через ViewModel или передаются при инициализации)
+    let authorID: String = "authorID_example"
+    let authorName: String = "Author Name"
+
     var body: some View {
         VStack(spacing: 16) {
             Group {
@@ -38,6 +43,15 @@ struct CreateCourseView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                 
+                // Добавляем выбор валюты
+                Picker("Валюта", selection: $selectedCurrency) {
+                    Text("USD").tag("USD")
+                    Text("EUR").tag("EUR")
+                    Text("RUB").tag("RUB")
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal)
+                
                 Button(action: {
                     isImagePickerPresented = true
                 }) {
@@ -45,7 +59,7 @@ struct CreateCourseView: View {
                         Image(uiImage: coverImage)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 200, height: 200)  // Увеличенный размер изображения
+                            .frame(width: 200, height: 200)
                             .clipped()
                             .cornerRadius(8)
                             .padding(.horizontal)
@@ -106,7 +120,16 @@ struct CreateCourseView: View {
         isUploading = true
         uploadImage(image) { url in
             if let url = url {
-                viewModel.createCourse(title: title, description: description, price: coursePrice, coverImageURL: url.absoluteString)
+                // Передаем валюту и автора при создании курса
+                viewModel.createCourse(
+                    title: title,
+                    description: description,
+                    price: coursePrice,
+                    currency: selectedCurrency,
+                    coverImageURL: url.absoluteString,
+                    authorID: authorID,
+                    authorName: authorName
+                )
                 presentationMode.wrappedValue.dismiss()
             } else {
                 alertMessage = "Не удалось загрузить изображение. Пожалуйста, попробуйте ещё раз."
@@ -115,7 +138,7 @@ struct CreateCourseView: View {
             isUploading = false
         }
     }
-    
+
     func uploadImage(_ image: UIImage, completion: @escaping (URL?) -> Void) {
         let storage = Storage.storage()
         let storageRef = storage.reference().child("course_images/\(UUID().uuidString).jpg")

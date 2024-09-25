@@ -15,6 +15,18 @@ struct ProfileView: View {
                 Text("Email: \(viewModel.userEmail)")
                     .font(.title2)
                     .padding()
+                
+                // Отображение имени автора для блогеров
+                if !viewModel.authorName.isEmpty {
+                    Text("Имя автора: \(viewModel.authorName)")
+                        .font(.title3)
+                        .padding(.top, 10)
+                } else {
+                    Text("Вы не блогер или имя автора не указано.")
+                        .font(.title3)
+                        .padding(.top, 10)
+                }
+                
             } else {
                 Text("Вы не авторизованы")
                     .font(.title2)

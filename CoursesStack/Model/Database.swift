@@ -8,10 +8,11 @@
 import Foundation
 import Firebase
 
-struct UserModel: Identifiable {
+struct UserModel {
     var id: String
     var email: String
     var role: String
+    var authorName: String? // Имя автора, опциональное для блогеров
 }
 
 struct Course: Identifiable {
@@ -21,18 +22,20 @@ struct Course: Identifiable {
     var price: Double
     var coverImageURL: String
     var authorID: String
+    var authorName: String
     var branches: [CourseBranch]
     var reviews: [Review] // Добавляем отзывы в курс
     // Добавляем свойство для отслеживания завершенных веток
     var completedBranches: [String: Bool] = [:]
     
-    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, branches: [CourseBranch], reviews: [Review]) {
+    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review]) {
         self.id = id
         self.title = title
         self.description = description
         self.price = price
         self.coverImageURL = coverImageURL
         self.authorID = authorID
+        self.authorName = authorName
         self.branches = branches
         self.reviews = reviews
         

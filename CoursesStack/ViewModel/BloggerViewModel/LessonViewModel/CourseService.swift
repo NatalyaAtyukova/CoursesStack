@@ -99,6 +99,7 @@ class CourseService {
               let description = data["description"] as? String,
               let price = data["price"] as? Double,
               let authorID = data["authorID"] as? String,
+              let authorName = data["authorName"] as? String,
               let coverImageURL = data["coverImageURL"] as? String,
               let branchesData = data["branches"] as? [String: Any] else { return nil }
         
@@ -110,7 +111,7 @@ class CourseService {
       
         let reviews: [Review] = [] // Или парсинг, если данные есть в базе
         
-        return Course(id: id, title: title, description: description, price: price, coverImageURL: coverImageURL, authorID: authorID, branches: branches, reviews: reviews)
+        return Course(id: id, title: title, description: description, price: price, coverImageURL: coverImageURL, authorID: authorID, authorName: authorName, branches: branches, reviews: reviews)
     }
     
     // Парсинг данных ветки курса

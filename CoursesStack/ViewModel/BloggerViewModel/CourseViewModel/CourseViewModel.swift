@@ -60,6 +60,7 @@ class CourseViewModel: ObservableObject {
             "price": course.price,
             "coverImageURL": course.coverImageURL,
             "authorID": course.authorID,
+            "authorName": course.authorName,
             "branches": course.branches.map { $0.toDict() }, // Преобразование веток в массив словарей
             "reviews": course.reviews.map { $0.toDict() } // Преобразование отзывов в массив словарей
         ]

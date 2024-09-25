@@ -31,6 +31,7 @@ class BloggerDashboardViewModel: ObservableObject {
                             price: data["price"] as? Double ?? 0.0,
                             coverImageURL: data["coverImageURL"] as? String ?? "",
                             authorID: data["authorID"] as? String ?? "",
+                            authorName: data["authorName"] as? String ?? "",
                             branches: data["branches"] as? [CourseBranch] ?? [], // Пустой массив по умолчанию
                             reviews: [] // Пустой массив отзывов
                         )
@@ -39,25 +40,42 @@ class BloggerDashboardViewModel: ObservableObject {
             }
     }
     
+
     // Создание нового курса с URL изображения обложки
-    func createCourse(title: String, description: String, price: Double, coverImageURL: String) {
+    func createCourse(title: String, description: String, price: Double, currency: String, coverImageURL: String, authorID: String, authorName: String) {
         guard let userID = userID else { return }
         
-        let newCourse = [
-            "title": title,
-            "description": description,
-            "price": price,
-            "coverImageURL": coverImageURL, // Сохранение URL изображения
-            "authorID": userID,
-            "branches": [], // Пустой массив веток
-            "reviews": [] // Пустой массив отзывов
-        ] as [String : Any]
-        
-        db.collection("courses").addDocument(data: newCourse) { error in
+        // Сначала загрузим имя пользователя из коллекции "users" по userID
+        db.collection("users").document(userID).getDocument { snapshot, error in
             if let error = error {
-                self.errorMessage = AlertMessage(message: "Ошибка создания курса: \(error.localizedDescription)")
-            } else {
-                self.fetchCourses() // Обновление списка курсов
+                self.errorMessage = AlertMessage(message: "Ошибка получения имени автора: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let data = snapshot?.data(), let authorName = data["name"] as? String else {
+                self.errorMessage = AlertMessage(message: "Не удалось получить имя автора.")
+                return
+            }
+            
+            let newCourse = [
+                "title": title,
+                "description": description,
+                "price": price,
+                "currency": currency, // Сохранение валюты
+                "coverImageURL": coverImageURL, // Сохранение URL изображения
+                "authorID": userID,
+                "authorName": authorName, // Сохранение имени автора
+                "branches": [], // Пустой массив веток
+                "reviews": [] // Пустой массив отзывов
+            ] as [String: Any]
+            
+            // Сохраняем новый курс в коллекцию "courses"
+            self.db.collection("courses").addDocument(data: newCourse) { error in
+                if let error = error {
+                    self.errorMessage = AlertMessage(message: "Ошибка создания курса: \(error.localizedDescription)")
+                } else {
+                    self.fetchCourses() // Обновление списка курсов
+                }
             }
         }
     }
