@@ -98,20 +98,25 @@ class CourseService {
               let title = data["title"] as? String,
               let description = data["description"] as? String,
               let price = data["price"] as? Double,
+              let currencyString = data["currency"] as? String,
+              let currency = Currency(rawValue: currencyString), // Преобразование строки в перечисление
               let authorID = data["authorID"] as? String,
               let authorName = data["authorName"] as? String,
               let coverImageURL = data["coverImageURL"] as? String,
-              let branchesData = data["branches"] as? [String: Any] else { return nil }
-        
-        let branches = branchesData.compactMap { (key, value) -> CourseBranch? in
-            guard let branchData = value as? [String: Any] else { return nil }
-            return self.parseBranchData(branchData)
+              let branchesData = data["branches"] as? [[String: Any]] // Ветки парсим как массив
+        else {
+            return nil
         }
-        
-      
+
+        // Парсинг веток
+        let branches = branchesData.compactMap { branchData in
+            return self.parseBranchData(branchData) // Парсим каждую ветку
+        }
+
         let reviews: [Review] = [] // Или парсинг, если данные есть в базе
-        
-        return Course(id: id, title: title, description: description, price: price, coverImageURL: coverImageURL, authorID: authorID, authorName: authorName, branches: branches, reviews: reviews)
+
+        // Возвращаем объект курса с данными
+        return Course(id: id, title: title, description: description, price: price, currency: currency, coverImageURL: coverImageURL, authorID: authorID, authorName: authorName, branches: branches, reviews: reviews)
     }
     
     // Парсинг данных ветки курса

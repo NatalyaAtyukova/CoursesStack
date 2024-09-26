@@ -29,6 +29,7 @@ class BloggerDashboardViewModel: ObservableObject {
                             title: data["title"] as? String ?? "",
                             description: data["description"] as? String ?? "",
                             price: data["price"] as? Double ?? 0.0,
+                            currency: Currency(rawValue: data["currency"] as? String ?? "") ?? .dollar, // Значение по умолчанию
                             coverImageURL: data["coverImageURL"] as? String ?? "",
                             authorID: data["authorID"] as? String ?? "",
                             authorName: data["authorName"] as? String ?? "",

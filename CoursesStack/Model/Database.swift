@@ -20,6 +20,7 @@ struct Course: Identifiable {
     var title: String
     var description: String
     var price: Double
+    var currency: Currency // Добавляем поддержку валюты
     var coverImageURL: String
     var authorID: String
     var authorName: String
@@ -28,11 +29,12 @@ struct Course: Identifiable {
     // Добавляем свойство для отслеживания завершенных веток
     var completedBranches: [String: Bool] = [:]
     
-    init(id: String, title: String, description: String, price: Double, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review]) {
+    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review]) {
         self.id = id
         self.title = title
         self.description = description
         self.price = price
+        self.currency = currency
         self.coverImageURL = coverImageURL
         self.authorID = authorID
         self.authorName = authorName

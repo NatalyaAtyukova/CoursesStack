@@ -1,11 +1,32 @@
 import SwiftUI
 
+// Перечисление для валют
+enum Currency: String, CaseIterable, Identifiable {
+    case ruble = "RUB"
+    case euro = "EUR"
+    case dollar = "USD"
+    
+    var id: String { self.rawValue }
+    var symbol: String {
+        switch self {
+        case .ruble:
+            return "₽"
+        case .euro:
+            return "€"
+        case .dollar:
+            return "$"
+        }
+    }
+}
+
 struct CourseDetailView: View {
     @ObservedObject var viewModel: CourseDetailViewModel
+    @Environment(\.presentationMode) var presentationMode  // Для возврата назад
     @State private var isEditing = false
     @State private var newTitle = ""
     @State private var newDescription = ""
     @State private var newPrice = ""
+    @State private var newCurrency: Currency = .ruble  // Для выбора валюты
     @State private var showingAddBranch = false
     @State private var showingAddLesson = false
     @State private var selectedBranchID: String?
@@ -29,19 +50,20 @@ struct CourseDetailView: View {
             .padding()
         }
         .navigationTitle("Управление курсом")
-        .navigationBarTitleDisplayMode(.inline)  // Используем встроенный заголовок для уменьшения отступа
+        .navigationBarTitleDisplayMode(.inline)
         .background(Color(UIColor.systemGroupedBackground))
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
         }
         .fullScreenCover(isPresented: $viewModel.isDeleted) {
-            deletionScreen
+            deletionScreen  // Экран после удаления курса
         }
         .sheet(item: $selectedLesson) { lesson in
             LessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
         }
     }
 
+    // Секция редактирования курса
     private var editingSection: some View {
         VStack(spacing: 16) {
             TextField("Название", text: $newTitle)
@@ -63,10 +85,19 @@ struct CourseDetailView: View {
                 .cornerRadius(10)
                 .shadow(radius: 2)
 
+            // Добавляем выбор валюты
+            Picker("Валюта", selection: $newCurrency) {
+                ForEach(Currency.allCases) { currency in
+                    Text(currency.rawValue).tag(currency)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+
             HStack {
                 Button(action: {
                     if let price = Double(newPrice) {
-                        viewModel.updateCourse(title: newTitle, description: newDescription, price: price)
+                        viewModel.updateCourse(title: newTitle, description: newDescription, price: price, currency: newCurrency)
                         isEditing = false
                     }
                 }) {
@@ -94,6 +125,7 @@ struct CourseDetailView: View {
         }
     }
 
+    // Секция отображения деталей курса
     private var courseDetailSection: some View {
         VStack(alignment: .center, spacing: 16) {
             if let imageURL = URL(string: viewModel.course.coverImageURL) {
@@ -136,7 +168,8 @@ struct CourseDetailView: View {
                 .lineLimit(4)
                 .padding(.bottom, 8)
             
-            Text("Цена: \(viewModel.course.price, specifier: "%.2f") руб.")
+            // Отображение цены с учетом валюты
+            Text("Цена: \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
                 .font(.title2)
                 .foregroundColor(.green)
                 .padding(.top, 8)
@@ -201,12 +234,14 @@ struct CourseDetailView: View {
         }
     }
 
+    // Кнопки действий
     private var actionButtons: some View {
         HStack(spacing: 16) {
             Button(action: {
                 newTitle = viewModel.course.title
                 newDescription = viewModel.course.description
                 newPrice = "\(viewModel.course.price)"
+                newCurrency = viewModel.course.currency  // Устанавливаем текущую валюту
                 isEditing = true
             }) {
                 Text("Редактировать")
@@ -233,6 +268,7 @@ struct CourseDetailView: View {
         .padding(.top, 16)
     }
     
+    // Кнопка добавления ветки
     private var addBranchButton: some View {
         Button(action: {
             showingAddBranch.toggle()
@@ -250,13 +286,14 @@ struct CourseDetailView: View {
         }
     }
 
+    // Экран удаления курса
     private var deletionScreen: some View {
         VStack {
             Text("Курс был успешно удален.")
                 .font(.headline)
                 .padding()
             Button("Вернуться назад") {
-                // Логика для перехода на предыдущий экран
+                presentationMode.wrappedValue.dismiss()  // Возврат на предыдущий экран (список курсов)
             }
             .padding()
             .background(Color.blue)

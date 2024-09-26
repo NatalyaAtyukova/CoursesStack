@@ -60,13 +60,14 @@ class CourseDetailViewModel: ObservableObject {
     }
     
     // Обновление курса
-    func updateCourse(title: String, description: String, price: Double) {
+    func updateCourse(title: String, description: String, price: Double, currency: Currency) {
         guard !course.id.isEmpty else { return }
         
         db.collection("courses").document(course.id).updateData([
             "title": title,
             "description": description,
-            "price": price
+            "price": price,
+            "currency": currency.rawValue // Сохраняем значение валюты как строку
         ]) { error in
             if let error = error {
                 self.errorMessage = AlertMessage(message: "Ошибка обновления курса: \(error.localizedDescription)")
@@ -74,6 +75,7 @@ class CourseDetailViewModel: ObservableObject {
                 self.course.title = title
                 self.course.description = description
                 self.course.price = price
+                self.course.currency = currency // Обновляем курс с новой валютой
             }
         }
     }
