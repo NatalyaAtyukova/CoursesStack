@@ -44,14 +44,20 @@ class CourseDetailViewModel: ObservableObject {
     // Сохранение изменений курса в Firestore
     func saveCourse() {
         guard !course.id.isEmpty else { return }
-        
+
         let courseData: [String: Any] = [
             "title": course.title,
             "description": course.description,
             "price": course.price,
-            "branches": course.branches.map { $0.toDict() } // Преобразуем ветки в словарь
+            "currency": course.currency.rawValue, // Сохраняем строковое значение валюты
+            "coverImageURL": course.coverImageURL, // Сохраняем URL обложки курса
+            "authorID": course.authorID,
+            "authorName": course.authorName,
+            "branches": course.branches.map { $0.toDict() }, // Преобразуем ветки в словарь
+            "reviews": course.reviews.map { $0.toDict() }, // Преобразуем отзывы в словарь
+            "completedBranches": course.completedBranches // Завершенные ветки курса
         ]
-        
+
         db.collection("courses").document(course.id).setData(courseData) { error in
             if let error = error {
                 self.errorMessage = AlertMessage(message: "Ошибка сохранения курса: \(error.localizedDescription)")

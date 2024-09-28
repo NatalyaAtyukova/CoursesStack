@@ -20,16 +20,15 @@ struct Course: Identifiable {
     var title: String
     var description: String
     var price: Double
-    var currency: Currency // Добавляем поддержку валюты
+    var currency: Currency
     var coverImageURL: String
     var authorID: String
     var authorName: String
     var branches: [CourseBranch]
-    var reviews: [Review] // Добавляем отзывы в курс
-    // Добавляем свойство для отслеживания завершенных веток
-    var completedBranches: [String: Bool] = [:]
+    var reviews: [Review]
+    var completedBranches: [String: Bool] = [:] // Добавляем completedBranches
     
-    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review]) {
+    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool] = [:]) {
         self.id = id
         self.title = title
         self.description = description
@@ -40,11 +39,7 @@ struct Course: Identifiable {
         self.authorName = authorName
         self.branches = branches
         self.reviews = reviews
-        
-        // Инициализация completedBranches
-        for branch in branches {
-            self.completedBranches[branch.id] = false
-        }
+        self.completedBranches = completedBranches // Инициализируем completedBranches
     }
 }
 

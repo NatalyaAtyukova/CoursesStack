@@ -9,7 +9,7 @@ class BloggerDashboardViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private let userID = Auth.auth().currentUser?.uid
     
-    // Загрузка курсов блогера
+    // Загрузка курсов блогера с обновленной структурой данных
     func fetchCourses() {
         guard let userID = userID else { return }
         
@@ -24,17 +24,84 @@ class BloggerDashboardViewModel: ObservableObject {
                 if let snapshot = snapshot {
                     self.courses = snapshot.documents.compactMap { doc in
                         let data = doc.data()
+                        
+                        // Отладочные сообщения для диагностики
+                        print("Document data for course \(doc.documentID): \(data)")
+                        
+                        // Загрузка веток курсов
+                        let branchesData = data["branches"] as? [[String: Any]] ?? []
+                        let branches: [CourseBranch] = branchesData.compactMap { branchData in
+                            print("Branch data for course \(doc.documentID): \(branchData)")
+                            let lessonsData = branchData["lessons"] as? [[String: Any]] ?? []
+                            let lessons: [Lesson] = lessonsData.compactMap { lessonData in
+                                print("Lesson data: \(lessonData)")
+                                
+                                let assignmentsData = lessonData["assignments"] as? [[String: Any]] ?? []
+                                let assignments: [Assignment] = assignmentsData.compactMap { assignmentData in
+                                    print("Assignment data: \(assignmentData)")
+                                    return Assignment(
+                                        id: assignmentData["id"] as? String ?? UUID().uuidString,
+                                        title: assignmentData["title"] as? String ?? "",
+                                        type: AssignmentType(rawValue: assignmentData["type"] as? String ?? "") ?? .multipleChoice,
+                                        choices: assignmentData["choices"] as? [String] ?? [],
+                                        correctAnswer: assignmentData["correctAnswer"] as? String ?? ""
+                                    )
+                                }
+                                
+                                let downloadableFilesData = lessonData["downloadableFiles"] as? [[String: Any]] ?? []
+                                let downloadableFiles: [DownloadableFile] = downloadableFilesData.compactMap { fileData in
+                                    DownloadableFile(
+                                        id: fileData["id"] as? String ?? UUID().uuidString,
+                                        fileName: fileData["fileName"] as? String ?? "",
+                                        fileURL: fileData["fileURL"] as? String ?? ""
+                                    )
+                                }
+                                
+                                return Lesson(
+                                    id: lessonData["id"] as? String ?? UUID().uuidString,
+                                    title: lessonData["title"] as? String ?? "",
+                                    content: lessonData["content"] as? String ?? "",
+                                    videoURL: lessonData["videoURL"] as? String,
+                                    assignments: assignments,
+                                    downloadableFiles: downloadableFiles
+                                )
+                            }
+                            
+                            return CourseBranch(
+                                id: branchData["id"] as? String ?? UUID().uuidString,
+                                title: branchData["title"] as? String ?? "",
+                                description: branchData["description"] as? String ?? "",
+                                lessons: lessons
+                            )
+                        }
+                        
+                        // Загрузка отзывов
+                        let reviewsData = data["reviews"] as? [[String: Any]] ?? []
+                        let reviews: [Review] = reviewsData.compactMap { reviewData in
+                            print("Review data for course \(doc.documentID): \(reviewData)")
+                            return Review(
+                                id: reviewData["id"] as? String ?? UUID().uuidString,
+                                userID: reviewData["userID"] as? String ?? "",
+                                content: reviewData["content"] as? String ?? "",
+                                rating: reviewData["rating"] as? Int ?? 0
+                            )
+                        }
+                        
+                        // Инициализация completedBranches (например, пустое состояние)
+                        let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
+                        
                         return Course(
                             id: doc.documentID,
                             title: data["title"] as? String ?? "",
                             description: data["description"] as? String ?? "",
                             price: data["price"] as? Double ?? 0.0,
-                            currency: Currency(rawValue: data["currency"] as? String ?? "") ?? .dollar, // Значение по умолчанию
+                            currency: Currency(rawValue: data["currency"] as? String ?? "") ?? .dollar,
                             coverImageURL: data["coverImageURL"] as? String ?? "",
                             authorID: data["authorID"] as? String ?? "",
                             authorName: data["authorName"] as? String ?? "",
-                            branches: data["branches"] as? [CourseBranch] ?? [], // Пустой массив по умолчанию
-                            reviews: [] // Пустой массив отзывов
+                            branches: branches,
+                            reviews: reviews,
+                            completedBranches: completedBranches
                         )
                     }
                 }
