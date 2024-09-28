@@ -219,7 +219,7 @@ struct CourseDetailView: View {
                         }
                         .sheet(isPresented: $showingAddLesson) {
                             if let branchID = selectedBranchID {
-                                AddLessonView(branchID: branchID, viewModel: viewModel)
+                                AddLessonView(branchID: branchID, branchName: "Имя ветки", viewModel: viewModel)
                             }
                         }
                     }

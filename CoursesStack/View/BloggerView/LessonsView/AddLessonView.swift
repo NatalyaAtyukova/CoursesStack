@@ -1,25 +1,37 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct AddLessonView: View {
     var branchID: String
+    var branchName: String
     @ObservedObject var viewModel: CourseDetailViewModel
     @State private var lessonTitle = ""
     @State private var lessonContent = ""
     @State private var videoURL = ""
     @State private var assignments = [Assignment]()
     @State private var downloadableFiles = [DownloadableFile]()
-
+    @State private var showAlert = false
+    @State private var showDocumentPicker = false
+    @State private var selectedFileURL: URL?
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                // Отображение имени ветки
+                Text("Добавление урока в ветку: \(branchName)")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.bottom, 20)
+                
                 // Поле для названия урока
                 TextField("Название урока", text: $lessonTitle)
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
 
-                // Поле для содержания урока
-                TextField("Содержание урока", text: $lessonContent)
+                // Большое поле для содержания урока
+                TextEditor(text: $lessonContent)
+                    .frame(height: 200)
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
@@ -30,6 +42,21 @@ struct AddLessonView: View {
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
 
+                // Кнопка для выбора файла через DocumentPicker
+                Button(action: {
+                    showDocumentPicker.toggle()
+                }) {
+                    Text("Добавить файл")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .sheet(isPresented: $showDocumentPicker) {
+                    DocumentPicker(fileURL: $selectedFileURL)
+                }
+
                 // Раздел для добавления заданий
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Задания")
@@ -37,99 +64,81 @@ struct AddLessonView: View {
 
                     ForEach(assignments.indices, id: \.self) { index in
                         VStack(alignment: .leading, spacing: 8) {
-                            // Проверка на допустимый диапазон индексов
-                            if index < assignments.count {
-                                TextField("Название задания", text: $assignments[index].title)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .padding(.vertical, 4)
-
-                                Picker("Тип задания", selection: $assignments[index].type) {
-                                    Text("Множественный выбор").tag(AssignmentType.multipleChoice)
-                                    Text("Текстовый ответ").tag(AssignmentType.textAnswer)
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
+                            let assignment = assignments[index]
+                            
+                            TextField("Название задания", text: $assignments[index].title)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .padding(.vertical, 4)
 
-                                if assignments[index].type == .multipleChoice {
-                                    VStack(alignment: .leading) {
-                                        // Доступ к choices без использования force unwrap
-                                        ForEach(assignments[index].choices.indices, id: \.self) { choiceIndex in
-                                            HStack {
-                                                TextField("Вариант \(choiceIndex + 1)", text: $assignments[index].choices[choiceIndex])
-                                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                            Picker("Тип задания", selection: $assignments[index].type) {
+                                Text("Множественный выбор").tag(AssignmentType.multipleChoice)
+                                Text("Текстовый ответ").tag(AssignmentType.textAnswer)
+                            }
+                            .pickerStyle(SegmentedPickerStyle())
+                            .padding(.vertical, 4)
 
-                                                Button(action: {
-                                                    assignments[index].choices.remove(at: choiceIndex)
-                                                }) {
-                                                    Image(systemName: "minus.circle")
-                                                        .foregroundColor(.red)
+                            if assignment.type == .multipleChoice {
+                                // Варианты ответов
+                                VStack(alignment: .leading) {
+                                    ForEach(assignment.choices.indices, id: \.self) { choiceIndex in
+                                        HStack {
+                                            TextField("Вариант \(choiceIndex + 1)", text: $assignments[index].choices[choiceIndex])
+                                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                            
+                                            // Toggle для выбора правильного ответа
+                                            Toggle(isOn: Binding<Bool>(
+                                                get: {
+                                                    assignments[index].choices[choiceIndex] == assignments[index].correctAnswer
+                                                },
+                                                set: { newValue in
+                                                    if newValue {
+                                                        assignments[index].correctAnswer = assignments[index].choices[choiceIndex]
+                                                    } else {
+                                                        assignments[index].correctAnswer = ""
+                                                    }
                                                 }
+                                            )) {
+                                                Text("Правильный")
+                                            }
+                                            
+                                            Button(action: {
+                                                assignments[index].choices.remove(at: choiceIndex)
+                                            }) {
+                                                Image(systemName: "minus.circle")
+                                                    .foregroundColor(.red)
                                             }
                                         }
-
-                                        Button(action: {
-                                            assignments[index].choices.append("")
-                                        }) {
-                                            Text("Добавить вариант ответа")
-                                                .padding(.horizontal)
-                                                .padding(.vertical, 8)
-                                                .background(Color.blue)
-                                                .foregroundColor(.white)
-                                                .cornerRadius(8)
-                                        }
                                     }
-                                } else {
-                                    Text("Задание с текстовым ответом")
-                                        .foregroundColor(.gray)
-                                        .padding(.vertical, 4)
-                                }
 
-                                Button(action: {
-                                    assignments.remove(at: index)
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
+                                    Button(action: {
+                                        assignments[index].choices.append("")
+                                    }) {
+                                        Text("Добавить вариант ответа")
+                                            .padding(.horizontal)
+                                            .padding(.vertical, 8)
+                                            .background(Color.blue)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(8)
+                                    }
                                 }
-                                .padding(.top, 4)
+                            } else {
+                                TextField("Правильный текстовый ответ", text: $assignments[index].correctAnswer)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(.vertical, 4)
                             }
+
+                            Button(action: {
+                                assignments.remove(at: index)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                            .padding(.top, 4)
                         }
                     }
 
                     Button(action: addAssignment) {
                         Text("Добавить задание")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                }
-                .padding()
-
-                // Раздел для добавления файлов для скачивания
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Файлы для скачивания")
-                        .font(.headline)
-
-                    ForEach(downloadableFiles.indices, id: \.self) { index in
-                        HStack {
-                            if index < downloadableFiles.count {
-                                TextField("Название файла", text: $downloadableFiles[index].fileName)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .padding(.vertical, 4)
-
-                                Button(action: {
-                                    downloadableFiles.remove(at: index)
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                        }
-                    }
-
-                    Button(action: addDownloadableFile) {
-                        Text("Добавить файл")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
@@ -150,6 +159,8 @@ struct AddLessonView: View {
                             assignments: assignments,
                             downloadableFiles: downloadableFiles
                         )
+                        clearFields()
+                        showAlert = true
                     }
                 }) {
                     Text("Добавить урок")
@@ -159,23 +170,60 @@ struct AddLessonView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Урок добавлен!"), message: Text("Ваш урок успешно добавлен."), dismissButton: .default(Text("OK")))
+                }
             }
             .padding()
         }
     }
 
-    // Функция для добавления нового задания
+    private func clearFields() {
+        lessonTitle = ""
+        lessonContent = ""
+        videoURL = ""
+        assignments.removeAll()
+        downloadableFiles.removeAll()
+    }
+
     private func addAssignment() {
         assignments.append(Assignment(id: UUID().uuidString, title: "", type: .multipleChoice, choices: [""], correctAnswer: ""))
     }
-
-    // Функция для добавления нового файла для скачивания
-    private func addDownloadableFile() {
-        downloadableFiles.append(DownloadableFile(id: UUID().uuidString, fileName: "", fileURL: ""))
-    }
     
-    // Проверка валидности данных урока
     private func validateLessonData() -> Bool {
         return !lessonTitle.isEmpty && !lessonContent.isEmpty
+    }
+}
+
+// Новый компонент для выбора файлов
+struct DocumentPicker: UIViewControllerRepresentable {
+    @Binding var fileURL: URL?
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item])
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let parent: DocumentPicker
+
+        init(_ parent: DocumentPicker) {
+            self.parent = parent
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            parent.fileURL = urls.first
+        }
+
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            parent.fileURL = nil
+        }
     }
 }
