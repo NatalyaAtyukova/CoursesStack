@@ -39,13 +39,16 @@ class LessonDetailViewModel: ObservableObject {
     
     // Удаление урока
     func deleteLesson() {
+        print("Начало удаления урока с id: \(lesson.id)") // Для отладки
         courseService.deleteLesson(lesson.id)
             .sink { completion in
                 switch completion {
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
+                    print("Ошибка удаления урока: \(error.localizedDescription)") // Для отладки
                 case .finished:
-                    self.isDeleted = true // Урок успешно удален
+                    self.isDeleted = true
+                    print("Урок успешно удален") // Для отладки
                 }
             } receiveValue: { _ in
                 // Успешное удаление

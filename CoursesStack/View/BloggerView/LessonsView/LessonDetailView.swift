@@ -1,14 +1,17 @@
 import SwiftUI
 import PhotosUI
+import WebKit
 
 struct LessonDetailView: View {
     @ObservedObject var viewModel: LessonDetailViewModel
     @State private var isEditing = false
     @State private var newContent = ""
     @State private var newVideoURL = ""
-    @State private var selectedImage: UIImage? // Изображение, загруженное из галереи
-    @State private var showingImagePicker = false // Флаг для показа ImagePicker
-    @State private var newAssignments = [Assignment]() // Новые задания для редактирования
+    @State private var selectedImage: UIImage?
+    @State private var showingImagePicker = false
+    @State private var newAssignments = [Assignment]()
+    
+    @Environment(\.presentationMode) var presentationMode // Чтобы закрыть экран после удаления
 
     var body: some View {
         ScrollView {
@@ -26,6 +29,12 @@ struct LessonDetailView: View {
         .sheet(isPresented: $showingImagePicker) {
             PhotoPicker(selectedImage: $selectedImage)
         }
+        .onChange(of: viewModel.isDeleted) { isDeleted in
+            if isDeleted {
+                // Закрыть экран после успешного удаления урока
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
     
     private var editingSection: some View {
@@ -36,7 +45,6 @@ struct LessonDetailView: View {
                 .cornerRadius(10)
                 .shadow(radius: 2)
 
-            // Кнопка для открытия галереи
             Button(action: {
                 showingImagePicker = true
             }) {
@@ -87,6 +95,19 @@ struct LessonDetailView: View {
                                     TextField("Вариант \(choiceIndex + 1)", text: $newAssignments[index].choices[choiceIndex])
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                     
+                                    Toggle(isOn: Binding<Bool>(
+                                        get: {
+                                            newAssignments[index].choices[choiceIndex] == newAssignments[index].correctAnswer
+                                        },
+                                        set: { newValue in
+                                            if newValue {
+                                                newAssignments[index].correctAnswer = newAssignments[index].choices[choiceIndex]
+                                            }
+                                        }
+                                    )) {
+                                        Text("Правильный")
+                                    }
+                                    
                                     Button(action: {
                                         newAssignments[index].choices.remove(at: choiceIndex)
                                     }) {
@@ -121,7 +142,6 @@ struct LessonDetailView: View {
             
             HStack {
                 Button(action: {
-                    // Сохраняем изменения урока
                     viewModel.updateLesson(content: newContent, videoURL: newVideoURL, assignments: newAssignments)
                     isEditing = false
                 }) {
@@ -154,10 +174,15 @@ struct LessonDetailView: View {
             Text(viewModel.lesson.content)
                 .font(.body)
             
+            if let errorMessage = viewModel.errorMessage {
+                Text("Ошибка: \(errorMessage)")
+                    .foregroundColor(.red)
+            }
+
             if let videoURL = viewModel.lesson.videoURL, !videoURL.isEmpty {
-                Link("Видео урока", destination: URL(string: videoURL)!)
-                    .font(.headline)
-                    .foregroundColor(.blue)
+                WebView(url: URL(string: videoURL)!)
+                    .frame(height: 200)
+                    .cornerRadius(10)
             }
             
             Divider()
@@ -183,7 +208,7 @@ struct LessonDetailView: View {
             Button(action: {
                 newContent = viewModel.lesson.content
                 newVideoURL = viewModel.lesson.videoURL ?? ""
-                newAssignments = viewModel.lesson.assignments // Загружаем текущие задания для редактирования
+                newAssignments = viewModel.lesson.assignments
                 isEditing = true
             }) {
                 Text("Редактировать")
@@ -196,6 +221,7 @@ struct LessonDetailView: View {
             }
             
             Button(action: {
+                print("Кнопка 'Удалить урок' нажата") // Для отладки
                 viewModel.deleteLesson()
             }) {
                 Text("Удалить урок")
@@ -209,8 +235,21 @@ struct LessonDetailView: View {
         }
     }
 
-    // Функция для добавления нового задания
     private func addNewAssignment() {
         newAssignments.append(Assignment(id: UUID().uuidString, title: "", type: .multipleChoice, choices: [""], correctAnswer: ""))
+    }
+}
+
+// WebView для показа видео с YouTube
+struct WebView: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> WKWebView {
+        return WKWebView()
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        let request = URLRequest(url: url)
+        uiView.load(request)
     }
 }

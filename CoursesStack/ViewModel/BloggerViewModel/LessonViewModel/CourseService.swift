@@ -56,11 +56,14 @@ class CourseService {
     
     // Удаление урока
     func deleteLesson(_ lessonID: String) -> AnyPublisher<Void, Error> {
+        print("Удаление урока с ID: \(lessonID)") // Для отладки
         return Future { promise in
             self.databaseRef.child("lessons").child(lessonID).removeValue { error, _ in
                 if let error = error {
+                    print("Ошибка при удалении урока из Firebase: \(error.localizedDescription)") // Для отладки
                     promise(.failure(error))
                 } else {
+                    print("Урок успешно удален из Firebase") // Для отладки
                     promise(.success(()))
                 }
             }
