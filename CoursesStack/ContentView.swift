@@ -34,19 +34,19 @@ struct ContentView: View {
                             Text("CoursesStack")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255)) // Мягкий красный цвет для названия
+                                .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красный цвет для заголовка
                                 .padding(.bottom, 30)
                             
                             authSection
                                 .padding()
-                                .background(Color(UIColor.systemGray6))
+                                .background(Color(white: 0.15)) // Темный фон для секции авторизации
                                 .cornerRadius(16)
                                 .shadow(radius: 10)
                                 .padding()
                         }
                     }
                 }
-                .navigationBarTitle("Добро пожаловать", displayMode: .inline)
+                .navigationBarTitle("Курсы", displayMode: .inline) // Изменяем заголовок на "Курсы"
             }
         }
     }
@@ -68,6 +68,7 @@ struct ContentView: View {
         VStack(spacing: 20) {
             Text("Войдите или зарегистрируйтесь")
                 .font(.title2)
+                .foregroundColor(.white) // Белый текст для контраста
                 .bold()
                 .padding(.bottom, 20)
             
@@ -75,7 +76,7 @@ struct ContentView: View {
                 Text("Войти")
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красный акцент на кнопке
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
@@ -85,7 +86,7 @@ struct ContentView: View {
                 Text("Зарегистрироваться")
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
-                    .background(Color.black)
+                    .background(Color.black) // Черная кнопка для регистрации
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
