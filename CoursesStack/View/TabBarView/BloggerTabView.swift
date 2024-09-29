@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BloggerTabView: View {
-    @ObservedObject var userViewModel: UserViewModel // Здесь используем правильное имя параметра
+    @ObservedObject var userViewModel: UserViewModel
     
     var body: some View {
         TabView {
@@ -11,11 +11,15 @@ struct BloggerTabView: View {
                     Text("Главная")
                 }
 
-            ProfileView(viewModel: ProfileViewModel()) // Используем ProfileViewModel для профиля
+            ProfileView(viewModel: ProfileViewModel())
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Профиль")
                 }
+        }
+        .accentColor(.red) // Активный таб будет красным
+        .onAppear {
+            UITabBar.appearance().unselectedItemTintColor = UIColor.white // Цвет неактивных табов
         }
     }
 }
