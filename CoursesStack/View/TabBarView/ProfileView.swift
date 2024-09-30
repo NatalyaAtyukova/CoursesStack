@@ -55,7 +55,8 @@ struct ProfileView: View {
             Spacer()
         }
         .padding()
-        .background(Color(white: 0.15)) // Темный фон для экрана
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255)
+            .edgesIgnoringSafeArea(.all)) // Темный фон для экрана
         .onAppear {
             viewModel.fetchProfile()
         }

@@ -22,6 +22,7 @@ struct AddLessonView: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.bottom, 20)
+                    .foregroundColor(.white) // Белый цвет текста для заголовка
                 
                 // Поле для названия урока
                 TextField("Название урока", text: $lessonTitle)
@@ -49,8 +50,8 @@ struct AddLessonView: View {
                     Text("Добавить файл")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
+                        .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                        .foregroundColor(.white) // Белый цвет текста
                         .cornerRadius(10)
                 }
                 .sheet(isPresented: $showDocumentPicker) {
@@ -61,6 +62,7 @@ struct AddLessonView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Задания")
                         .font(.headline)
+                        .foregroundColor(.white) // Белый цвет текста для заголовка
 
                     ForEach(assignments.indices, id: \.self) { index in
                         VStack(alignment: .leading, spacing: 8) {
@@ -100,12 +102,13 @@ struct AddLessonView: View {
                                             )) {
                                                 Text("Правильный")
                                             }
+                                            .tint(Color(red: 235/255, green: 64/255, blue: 52/255)) // Устанавливает цвет переключателя
                                             
                                             Button(action: {
                                                 assignments[index].choices.remove(at: choiceIndex)
                                             }) {
                                                 Image(systemName: "minus.circle")
-                                                    .foregroundColor(.red)
+                                                    .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                                             }
                                         }
                                     }
@@ -116,8 +119,8 @@ struct AddLessonView: View {
                                         Text("Добавить вариант ответа")
                                             .padding(.horizontal)
                                             .padding(.vertical, 8)
-                                            .background(Color.blue)
-                                            .foregroundColor(.white)
+                                            .background(Color(red: 60/255, green: 60/255, blue: 62/255))
+                                            .foregroundColor(.white) // Белый цвет текста
                                             .cornerRadius(8)
                                     }
                                 }
@@ -141,8 +144,8 @@ struct AddLessonView: View {
                         Text("Добавить задание")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
+                            .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                            .foregroundColor(.white) // Белый цвет текста
                             .cornerRadius(10)
                     }
                 }
@@ -166,8 +169,8 @@ struct AddLessonView: View {
                     Text("Добавить урок")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
+                        .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                        .foregroundColor(.white) // Белый цвет текста
                         .cornerRadius(10)
                 }
                 .alert(isPresented: $showAlert) {
@@ -175,6 +178,7 @@ struct AddLessonView: View {
                 }
             }
             .padding()
+            .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для всего экрана
         }
     }
 

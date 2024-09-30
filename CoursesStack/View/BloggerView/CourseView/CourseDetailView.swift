@@ -33,7 +33,7 @@ struct CourseDetailView: View {
     
     @State private var selectedLesson: Lesson?
     @State private var showingLessonDetail = false
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
@@ -51,7 +51,7 @@ struct CourseDetailView: View {
         }
         .navigationTitle("Управление курсом")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для экрана
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
         }
@@ -62,7 +62,7 @@ struct CourseDetailView: View {
             LessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
         }
     }
-
+    
     // Секция редактирования курса
     private var editingSection: some View {
         VStack(spacing: 16) {
@@ -71,20 +71,20 @@ struct CourseDetailView: View {
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-
+            
             TextField("Описание", text: $newDescription)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-
+            
             TextField("Цена", text: $newPrice)
                 .keyboardType(.decimalPad)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-
+            
             // Добавляем выбор валюты
             Picker("Валюта", selection: $newCurrency) {
                 ForEach(Currency.allCases) { currency in
@@ -93,7 +93,7 @@ struct CourseDetailView: View {
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding()
-
+            
             HStack {
                 Button(action: {
                     if let price = Double(newPrice) {
@@ -104,19 +104,19 @@ struct CourseDetailView: View {
                     Text("Сохранить")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.green)
+                        .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
-
+                
                 Button(action: {
                     isEditing = false
                 }) {
                     Text("Отменить")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.red)
+                        .background(Color(red: 60/255, green: 60/255, blue: 62/255)) 
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
@@ -124,7 +124,7 @@ struct CourseDetailView: View {
             }
         }
     }
-
+    
     // Секция отображения деталей курса
     private var courseDetailSection: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -153,12 +153,13 @@ struct CourseDetailView: View {
                     }
                 }
             }
-
+            
             Text(viewModel.course.title)
                 .font(.title)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
+                .foregroundColor(.white)
                 .padding(.top, 8)
             
             Text(viewModel.course.description)
@@ -166,12 +167,13 @@ struct CourseDetailView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(4)
+                .foregroundColor(.white)
                 .padding(.bottom, 8)
             
             // Отображение цены с учетом валюты
             Text("Цена: \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
                 .font(.title2)
-                .foregroundColor(.green)
+                .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                 .padding(.top, 8)
             
             Divider()
@@ -192,7 +194,7 @@ struct CourseDetailView: View {
                                 showingLessonDetail = true
                             }
                         )
-
+                        
                         Text("Уроки:")
                             .font(.subheadline)
                             .padding(.top, 8)
@@ -212,7 +214,7 @@ struct CourseDetailView: View {
                             Text("Добавить урок")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.green)
+                                .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                                 .shadow(radius: 2)
@@ -233,7 +235,7 @@ struct CourseDetailView: View {
             addBranchButton
         }
     }
-
+    
     // Кнопки действий
     private var actionButtons: some View {
         HStack(spacing: 16) {
@@ -247,7 +249,7 @@ struct CourseDetailView: View {
                 Text("Редактировать")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 2)
@@ -259,8 +261,8 @@ struct CourseDetailView: View {
                 Text("Удалить")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255)) 
+                    .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }
@@ -276,7 +278,7 @@ struct CourseDetailView: View {
             Text("Добавить ветку")
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.green)
+                .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
                 .foregroundColor(.white)
                 .cornerRadius(10)
                 .shadow(radius: 2)
@@ -285,20 +287,29 @@ struct CourseDetailView: View {
             AddBranchView(viewModel: viewModel)
         }
     }
-
+    
     // Экран удаления курса
     private var deletionScreen: some View {
         VStack {
             Text("Курс был успешно удален.")
                 .font(.headline)
+                .foregroundColor(Color.white)  // Белый цвет текста
                 .padding()
+                .background(Color(red: 44/255, green: 44/255, blue: 46/255))  // Темный фон для текста
+                .cornerRadius(10)
+            
             Button("Вернуться назад") {
                 presentationMode.wrappedValue.dismiss()  // Возврат на предыдущий экран (список курсов)
             }
             .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
+            .background(Color(red: 0/255, green: 122/255, blue: 255/255))  // Синий фон кнопки
+            .foregroundColor(.white)  // Белый цвет текста кнопки
             .cornerRadius(10)
+            .shadow(radius: 2)  // Тень для кнопки
         }
+        .padding()
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255))  // Темный фон для всего экрана
+        .cornerRadius(10)
     }
 }
+

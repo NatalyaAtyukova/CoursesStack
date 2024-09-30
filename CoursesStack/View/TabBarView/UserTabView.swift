@@ -10,12 +10,14 @@ struct UserTabView: View {
                 .tabItem {
                     Image(systemName: "book.fill")
                     Text("Курсы")
+                        .foregroundColor(.white)
                 }
 
             ProfileView(viewModel: profileViewModel) // Используем ProfileViewModel для профиля
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Профиль")
+                        .foregroundColor(.white)
                 }
         }
     }

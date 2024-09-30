@@ -47,6 +47,7 @@ struct ContentView: View {
                     }
                 }
                 .navigationBarTitle("Курсы", displayMode: .inline) // Изменяем заголовок на "Курсы"
+                .foregroundColor(.white)
             }
         }
     }

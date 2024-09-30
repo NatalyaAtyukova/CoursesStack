@@ -26,6 +26,7 @@ struct LessonDetailView: View {
             .padding()
         }
         .navigationTitle("Урок: \(viewModel.lesson.title)")
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для всего экрана
         .sheet(isPresented: $showingImagePicker) {
             PhotoPicker(selectedImage: $selectedImage)
         }
@@ -51,8 +52,8 @@ struct LessonDetailView: View {
                 Text("Загрузить файл")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                    .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }
@@ -75,6 +76,8 @@ struct LessonDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Редактировать задания")
                     .font(.headline)
+                    .foregroundColor(.white) // Белый цвет текста
+                
                 
                 ForEach(newAssignments.indices, id: \.self) { index in
                     VStack(alignment: .leading, spacing: 8) {
@@ -124,7 +127,7 @@ struct LessonDetailView: View {
                                     .padding(.horizontal)
                                     .padding(.vertical, 8)
                                     .background(Color.blue)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.white) // Белый цвет текста
                                     .cornerRadius(8)
                             }
                         }
@@ -135,7 +138,7 @@ struct LessonDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
-                        .foregroundColor(.white)
+                        .foregroundColor(.white) // Белый цвет текста
                         .cornerRadius(10)
                 }
             }
@@ -149,7 +152,7 @@ struct LessonDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.green)
-                        .foregroundColor(.white)
+                        .foregroundColor(.white) // Белый цвет текста
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
@@ -161,7 +164,7 @@ struct LessonDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.red)
-                        .foregroundColor(.white)
+                        .foregroundColor(.white) // Белый цвет текста
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
@@ -173,6 +176,7 @@ struct LessonDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(viewModel.lesson.content)
                 .font(.body)
+                .foregroundColor(.white) // Белый цвет текста
             
             if let errorMessage = viewModel.errorMessage {
                 Text("Ошибка: \(errorMessage)")
@@ -189,6 +193,7 @@ struct LessonDetailView: View {
             
             Text("Задания и тесты")
                 .font(.headline)
+                .foregroundColor(.white) // Белый цвет текста
                 .padding(.bottom, 8)
             
             if !viewModel.lesson.assignments.isEmpty {
@@ -215,7 +220,7 @@ struct LessonDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .foregroundColor(.white)
+                    .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }
@@ -228,7 +233,7 @@ struct LessonDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.red)
-                    .foregroundColor(.white)
+                    .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }

@@ -42,7 +42,7 @@ struct CreateCourseView: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-                
+                    
                 // Добавляем выбор валюты
                 Picker("Валюта", selection: $selectedCurrency) {
                     Text("USD").tag("USD")
@@ -67,8 +67,8 @@ struct CreateCourseView: View {
                         Text("Выберите изображение обложки")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
+                            .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон
+                            .foregroundColor(.white)  // Белый цвет текста
                             .cornerRadius(10)
                             .padding(.horizontal)
                     }
@@ -84,8 +84,8 @@ struct CreateCourseView: View {
                 Text("Создать курс")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))  // Красная кнопка
+                    .foregroundColor(.white)  // Белый цвет текста
                     .cornerRadius(10)
             }
             .padding(.horizontal)
@@ -94,7 +94,7 @@ struct CreateCourseView: View {
             Spacer()
         }
         .padding(.vertical, 20)
-        .background(Color(white: 0.95).edgesIgnoringSafeArea(.all))
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))  // Темный фон для всего экрана
         .navigationTitle("Создание курса")
         .sheet(isPresented: $isImagePickerPresented) {
             ImagePicker(image: $coverImage)
