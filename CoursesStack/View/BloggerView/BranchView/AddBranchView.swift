@@ -17,11 +17,14 @@ struct AddBranchView: View {
             VStack(alignment: .leading) {
                 Text("Описание ветки")
                     .font(.headline)
+                    .foregroundColor(.white) // Белый цвет текста
                     .padding(.horizontal)
                 
                 TextEditor(text: $branchDescription)
                     .frame(height: 150) // Устанавливаем высоту редактора
                     .padding(.horizontal)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Цвет для поля ввода
+                    .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.gray, lineWidth: 1)
@@ -42,8 +45,8 @@ struct AddBranchView: View {
                 Text("Добавить ветку")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                    .foregroundColor(.white) // Белый цвет текста кнопки
                     .cornerRadius(10)
             }
             .padding(.horizontal)
@@ -52,7 +55,7 @@ struct AddBranchView: View {
             Spacer()
         }
         .padding(.vertical, 20)
-        .background(Color(white: 0.95).edgesIgnoringSafeArea(.all))
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all)) // Темный фон для экрана
         .navigationTitle("Добавление ветки")
         // Настройка алерта
         .alert(isPresented: $showAlert) {

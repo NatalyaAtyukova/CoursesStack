@@ -50,7 +50,6 @@ struct CourseDetailView: View {
             .padding()
         }
         .navigationTitle("Управление курсом")
-        .navigationBarTitleDisplayMode(.inline)
         .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для экрана
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
@@ -116,7 +115,7 @@ struct CourseDetailView: View {
                     Text("Отменить")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(red: 60/255, green: 60/255, blue: 62/255)) 
+                        .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
@@ -261,7 +260,7 @@ struct CourseDetailView: View {
                 Text("Удалить")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 60/255, green: 60/255, blue: 62/255)) 
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                     .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
@@ -312,4 +311,5 @@ struct CourseDetailView: View {
         .cornerRadius(10)
     }
 }
+
 
