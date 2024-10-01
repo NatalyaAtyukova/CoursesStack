@@ -12,17 +12,19 @@ struct AddBranchView: View {
             TextField("Название ветки", text: $branchTitle)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
+                .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
             
             // Текстовый редактор для описания ветки
             VStack(alignment: .leading) {
                 Text("Описание ветки")
                     .font(.headline)
-                    .foregroundColor(.white) // Белый цвет текста
+                    .foregroundColor(.white) // Белый цвет текста заголовка
                     .padding(.horizontal)
                 
                 TextEditor(text: $branchDescription)
                     .frame(height: 150) // Устанавливаем высоту редактора
                     .padding(.horizontal)
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                     .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Цвет для поля ввода
                     .cornerRadius(10)
                     .overlay(

@@ -15,14 +15,14 @@ struct BranchCard: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(branch.title)
                     .font(.headline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
 
                 // Описание курса
                 Text(description)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.gray)
                     .lineLimit(3)  // Ограничение по количеству строк, можно настроить
-
+                    
                 // Проверка на наличие уроков в ветке
                 if branch.lessons.isEmpty {
                     Text("Нет уроков")

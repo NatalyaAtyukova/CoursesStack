@@ -163,7 +163,6 @@ struct CourseDetailView: View {
             
             Text(viewModel.course.description)
                 .font(.body)
-                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(4)
                 .foregroundColor(.white)

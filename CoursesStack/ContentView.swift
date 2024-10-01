@@ -6,9 +6,9 @@ struct ContentView: View {
     @State private var isLoading = true
     
     var body: some View {
-        NavigationView {
+        VStack {
             if isLoading {
-                // Показать индикатор загрузки, пока проверяем сессию
+                // Экран загрузки
                 VStack {
                     ProgressView("Загрузка...")
                         .progressViewStyle(CircularProgressViewStyle(tint: .red))
@@ -17,36 +17,40 @@ struct ContentView: View {
                 .onAppear {
                     checkAuthentication()
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black.edgesIgnoringSafeArea(.all)) // Черный фон на весь экран
             } else {
                 VStack {
                     if viewModel.isAuthenticated {
-                        // Переход к нужному интерфейсу в зависимости от роли
+                        // Интерфейс в зависимости от роли
                         if let role = viewModel.user?.role {
                             if role == "blogger" {
-                                BloggerTabView(userViewModel: viewModel) // Передаем правильный параметр userViewModel
+                                BloggerTabView(userViewModel: viewModel)
                             } else {
-                                UserTabView(userViewModel: viewModel) // Интерфейс для пользователя с TabBar
+                                UserTabView(userViewModel: viewModel)
                             }
                         }
                     } else {
-                        // Экран для входа/регистрации
+                        // Экран входа/регистрации
                         VStack {
                             Text("CoursesStack")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красный цвет для заголовка
+                                .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                                 .padding(.bottom, 30)
                             
                             authSection
                                 .padding()
-                                .background(Color(white: 0.15)) // Темный фон для секции авторизации
+                                .background(Color(white: 0.15))
                                 .cornerRadius(16)
                                 .shadow(radius: 10)
-                                .padding()
+                                .padding(.horizontal, 20)
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.top, 40) // Отступ сверху
+                        .background(Color.black.edgesIgnoringSafeArea(.all)) // Черный фон для всего экрана
                     }
                 }
-                .navigationBarTitle("Курсы", displayMode: .inline) // Изменяем заголовок на "Курсы"
                 .foregroundColor(.white)
             }
         }
@@ -57,7 +61,7 @@ struct ContentView: View {
         if Auth.auth().currentUser != nil {
             // Если пользователь авторизован, загружаем его роль
             viewModel.fetchUserRole {
-                self.isLoading = false // Заканчиваем загрузку
+                self.isLoading = false
             }
         } else {
             // Если пользователь не авторизован
@@ -65,11 +69,12 @@ struct ContentView: View {
         }
     }
     
+    // Секция входа/регистрации
     var authSection: some View {
         VStack(spacing: 20) {
             Text("Войдите или зарегистрируйтесь")
                 .font(.title2)
-                .foregroundColor(.white) // Белый текст для контраста
+                .foregroundColor(.white)
                 .bold()
                 .padding(.bottom, 20)
             
@@ -77,7 +82,7 @@ struct ContentView: View {
                 Text("Войти")
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
@@ -87,7 +92,7 @@ struct ContentView: View {
                 Text("Зарегистрироваться")
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
-                    .background(Color.black) // Черная кнопка для регистрации
+                    .background(Color.black)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)

@@ -29,20 +29,20 @@ struct AddLessonView: View {
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
-
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                 // Большое поле для содержания урока
                 TextEditor(text: $lessonContent)
                     .frame(height: 200)
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
-
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                 // Поле для ссылки на видео (опционально)
                 TextField("Ссылка на видео (опционально)", text: $videoURL)
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
-
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                 // Кнопка для выбора файла через DocumentPicker
                 Button(action: {
                     showDocumentPicker.toggle()
@@ -71,7 +71,7 @@ struct AddLessonView: View {
                             TextField("Название задания", text: $assignments[index].title)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .padding(.vertical, 4)
-
+                                .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                             Picker("Тип задания", selection: $assignments[index].type) {
                                 Text("Множественный выбор").tag(AssignmentType.multipleChoice)
                                 Text("Текстовый ответ").tag(AssignmentType.textAnswer)
@@ -86,7 +86,7 @@ struct AddLessonView: View {
                                         HStack {
                                             TextField("Вариант \(choiceIndex + 1)", text: $assignments[index].choices[choiceIndex])
                                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                            
+                                                .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                                             // Toggle для выбора правильного ответа
                                             Toggle(isOn: Binding<Bool>(
                                                 get: {
@@ -128,6 +128,7 @@ struct AddLessonView: View {
                                 TextField("Правильный текстовый ответ", text: $assignments[index].correctAnswer)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .padding(.vertical, 4)
+                                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                             }
 
                             Button(action: {

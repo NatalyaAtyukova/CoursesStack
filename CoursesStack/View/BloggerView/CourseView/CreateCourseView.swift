@@ -28,11 +28,12 @@ struct CreateCourseView: View {
                 TextField("Название курса", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-                
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                 TextEditor(text: $description)
                     .frame(height: 250)  // Увеличенное поле для описания
                     .padding(12)
                     .background(Color(UIColor.systemGray6))
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(UIColor.systemGray3), lineWidth: 1))
@@ -42,6 +43,7 @@ struct CreateCourseView: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
+                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
                     
                 // Добавляем выбор валюты
                 Picker("Валюта", selection: $selectedCurrency) {
@@ -67,7 +69,7 @@ struct CreateCourseView: View {
                         Text("Выберите изображение обложки")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон
+                            .background(Color(red: 235/255, green: 64/255, blue: 52/255))  // Красная кнопка
                             .foregroundColor(.white)  // Белый цвет текста
                             .cornerRadius(10)
                             .padding(.horizontal)
