@@ -36,7 +36,7 @@ struct CourseRightsDetailView: View {
                         }
                     }
                     .padding()
-                    .background(Color.gray.opacity(0.2)) // Темный фон для каждого элемента списка
+                    .background(Color.gray.opacity(0.2))
                     .cornerRadius(8)
                 }
             }
@@ -46,5 +46,23 @@ struct CourseRightsDetailView: View {
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
         .navigationTitle("Права для \(course.title)")
+    }
+}
+
+
+struct CourseRightsDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        let viewModel = CourseAccessRightsViewModel()
+        let course = Course(id: "1", title: "Курс 1", description: "Описание курса 1", price: 29.99, currency: .dollar, coverImageURL: "", authorID: "author1", authorName: "Автор 1", branches: [], reviews: [], completedBranches: [:], purchasedBy: [])
+        
+        // Пример данных для прав доступа
+        viewModel.accessRights = [
+            CourseAccessRights(courseID: course.id, userID: "user1", canView: true),
+            CourseAccessRights(courseID: course.id, userID: "user2", canView: false)
+        ]
+        
+        return NavigationView {
+            CourseRightsDetailView(course: course, viewModel: viewModel)
+        }
     }
 }
