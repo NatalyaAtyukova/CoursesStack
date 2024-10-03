@@ -96,30 +96,47 @@ class CourseService {
     }
     
     // Парсинг данных курса из Firebase
+    // Парсинг данных курса из Firebase
     private func parseCourseData(_ data: [String: Any]) -> Course? {
         guard let id = data["id"] as? String,
               let title = data["title"] as? String,
               let description = data["description"] as? String,
               let price = data["price"] as? Double,
               let currencyString = data["currency"] as? String,
-              let currency = Currency(rawValue: currencyString), // Преобразование строки в перечисление
+              let currency = Currency(rawValue: currencyString),
               let authorID = data["authorID"] as? String,
               let authorName = data["authorName"] as? String,
               let coverImageURL = data["coverImageURL"] as? String,
-              let branchesData = data["branches"] as? [[String: Any]] // Ветки парсим как массив
-        else {
+              let branchesData = data["branches"] as? [[String: Any]] else {
             return nil
         }
 
         // Парсинг веток
         let branches = branchesData.compactMap { branchData in
-            return self.parseBranchData(branchData) // Парсим каждую ветку
+            return self.parseBranchData(branchData)
         }
 
         let reviews: [Review] = [] // Или парсинг, если данные есть в базе
 
+        // Получаем или инициализируем completedBranches и purchasedBy
+        let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
+        let purchasedBy = data["purchasedBy"] as? [String] ?? []
+
         // Возвращаем объект курса с данными
-        return Course(id: id, title: title, description: description, price: price, currency: currency, coverImageURL: coverImageURL, authorID: authorID, authorName: authorName, branches: branches, reviews: reviews)
+        return Course(
+            id: id,
+            title: title,
+            description: description,
+            price: price,
+            currency: currency,
+            coverImageURL: coverImageURL,
+            authorID: authorID,
+            authorName: authorName,
+            branches: branches,
+            reviews: reviews,
+            completedBranches: completedBranches,
+            purchasedBy: purchasedBy
+        )
     }
     
     // Парсинг данных ветки курса

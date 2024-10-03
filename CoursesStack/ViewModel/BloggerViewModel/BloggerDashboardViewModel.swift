@@ -15,7 +15,7 @@ class BloggerDashboardViewModel: ObservableObject {
         
         db.collection("courses")
             .whereField("authorID", isEqualTo: userID)
-            .getDocuments { snapshot, error in
+            .getDocuments(source: .default) { snapshot, error in
                 if let error = error {
                     self.errorMessage = AlertMessage(message: "Ошибка загрузки курсов: \(error.localizedDescription)")
                     return
@@ -89,7 +89,8 @@ class BloggerDashboardViewModel: ObservableObject {
                         
                         // Инициализация completedBranches (например, пустое состояние)
                         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
-                        
+                        let purchasedBy = data["purchasedBy"] as? [String] ?? []
+
                         return Course(
                             id: doc.documentID,
                             title: data["title"] as? String ?? "",
@@ -101,7 +102,8 @@ class BloggerDashboardViewModel: ObservableObject {
                             authorName: data["authorName"] as? String ?? "",
                             branches: branches,
                             reviews: reviews,
-                            completedBranches: completedBranches
+                            completedBranches: completedBranches,
+                            purchasedBy: purchasedBy
                         )
                     }
                 }

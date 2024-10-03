@@ -8,6 +8,26 @@
 import Foundation
 import Firebase
 
+// Перечисление для валют
+enum Currency: String, Codable, CaseIterable, Identifiable {
+    case ruble = "RUB"
+    case euro = "EUR"
+    case dollar = "USD"
+    
+    var id: String { self.rawValue }
+    
+    var symbol: String {
+        switch self {
+        case .ruble:
+            return "₽"
+        case .euro:
+            return "€"
+        case .dollar:
+            return "$"
+        }
+    }
+}
+
 struct UserModel {
     var id: String
     var email: String
@@ -15,7 +35,7 @@ struct UserModel {
     var authorName: String? // Имя автора, опциональное для блогеров
 }
 
-struct Course: Identifiable {
+struct Course: Identifiable, Decodable {
     var id: String
     var title: String
     var description: String
@@ -26,9 +46,10 @@ struct Course: Identifiable {
     var authorName: String
     var branches: [CourseBranch]
     var reviews: [Review]
-    var completedBranches: [String: Bool] = [:] // Добавляем completedBranches
-    
-    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool] = [:]) {
+    var completedBranches: [String: Bool]
+    var purchasedBy: [String]
+
+    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool], purchasedBy: [String]) {
         self.id = id
         self.title = title
         self.description = description
@@ -39,57 +60,58 @@ struct Course: Identifiable {
         self.authorName = authorName
         self.branches = branches
         self.reviews = reviews
-        self.completedBranches = completedBranches // Инициализируем completedBranches
+        self.completedBranches = completedBranches
+        self.purchasedBy = purchasedBy
     }
 }
 
 //Blogger добавляет курсы
 
-struct CourseBranch: Identifiable {
+struct CourseBranch: Identifiable, Decodable {
     var id: String
     var title: String
     var description: String
     var lessons: [Lesson]
 }
 
-struct Lesson: Identifiable {
+struct Lesson: Identifiable, Decodable {
     var id: String
     var title: String
-    var content: String // Текстовый контент
-    var videoURL: String? // Ссылка на видео (например, YouTube)
-    var assignments: [Assignment] // Задания и тесты
-    var downloadableFiles: [DownloadableFile] // Файлы для скачивания
-    
+    var content: String
+    var videoURL: String?
+    var assignments: [Assignment]
+    var downloadableFiles: [DownloadableFile]
 }
 
-// Пример структуры задания
-enum AssignmentType: String, CaseIterable {
+struct Assignment: Identifiable, Decodable {
+    var id: String
+    var title: String
+    var type: AssignmentType
+    var choices: [String]
+    var correctAnswer: String
+}
+
+enum AssignmentType: String, Codable {
     case multipleChoice = "multipleChoice"
     case textAnswer = "textAnswer"
 }
 
-struct Assignment: Identifiable {
-    var id: String
-    var title: String
-    var type: AssignmentType // Тип задания
-    var choices: [String] // Варианты ответов для multipleChoice
-    var correctAnswer: String // Правильный ответ
-}
-
-
-
-// Пример структуры файла для скачивания
-struct DownloadableFile: Identifiable {
+struct DownloadableFile: Identifiable, Decodable {
     var id: String
     var fileName: String
     var fileURL: String
 }
 
-// Отзывы оставляет User
-
-struct Review: Identifiable {
+struct Review: Identifiable, Decodable {
     var id: String
     var userID: String
     var content: String
     var rating: Int
+}
+
+struct CourseAccessRights: Identifiable, Decodable {
+    var id: String { userID } // Например, используем userID как идентификатор
+    var courseID: String
+    var userID: String
+    var canView: Bool
 }

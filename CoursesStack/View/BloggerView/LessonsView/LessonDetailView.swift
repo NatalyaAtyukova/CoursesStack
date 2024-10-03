@@ -219,7 +219,7 @@ struct LessonDetailView: View {
                 Text("Редактировать")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                     .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)
@@ -232,7 +232,7 @@ struct LessonDetailView: View {
                 Text("Удалить урок")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                     .foregroundColor(.white) // Белый цвет текста
                     .cornerRadius(10)
                     .shadow(radius: 2)

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct BloggerTabView: View {
     @ObservedObject var userViewModel: UserViewModel
-    
+
     var body: some View {
         TabView {
             BloggerDashboardView()
@@ -16,10 +16,16 @@ struct BloggerTabView: View {
                     Image(systemName: "person.fill")
                     Text("Профиль")
                 }
+
+            CourseAccessRightsView()
+                .tabItem {
+                    Image(systemName: "lock.fill")
+                    Text("Права доступа")
+                }
         }
-        .accentColor(.red) // Активный таб будет красным
+        .accentColor(.red)
         .onAppear {
-            UITabBar.appearance().unselectedItemTintColor = UIColor.white // Цвет неактивных табов
+            UITabBar.appearance().unselectedItemTintColor = UIColor.white
         }
     }
 }

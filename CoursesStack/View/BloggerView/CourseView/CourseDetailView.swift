@@ -1,24 +1,5 @@
 import SwiftUI
 
-// Перечисление для валют
-enum Currency: String, CaseIterable, Identifiable {
-    case ruble = "RUB"
-    case euro = "EUR"
-    case dollar = "USD"
-    
-    var id: String { self.rawValue }
-    var symbol: String {
-        switch self {
-        case .ruble:
-            return "₽"
-        case .euro:
-            return "€"
-        case .dollar:
-            return "$"
-        }
-    }
-}
-
 struct CourseDetailView: View {
     @ObservedObject var viewModel: CourseDetailViewModel
     @Environment(\.presentationMode) var presentationMode  // Для возврата назад
@@ -86,7 +67,7 @@ struct CourseDetailView: View {
             
             // Добавляем выбор валюты
             Picker("Валюта", selection: $newCurrency) {
-                ForEach(Currency.allCases) { currency in
+                ForEach(Currency.allCases, id: \.self) { currency in
                     Text(currency.rawValue).tag(currency)
                 }
             }
