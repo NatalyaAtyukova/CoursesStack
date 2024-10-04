@@ -14,7 +14,8 @@ struct CourseDetailView: View {
     
     @State private var selectedLesson: Lesson?
     @State private var showingLessonDetail = false
-    
+    @Environment(\.dismiss) var dismiss  // Используем для закрытия экрана после удаления курса
+
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
@@ -35,14 +36,16 @@ struct CourseDetailView: View {
         .alert(item: $viewModel.errorMessage) { alertMessage in
             Alert(title: Text("Ошибка"), message: Text(alertMessage.message), dismissButton: .default(Text("ОК")))
         }
-        .fullScreenCover(isPresented: $viewModel.isDeleted) {
-            deletionScreen  // Экран после удаления курса
+        .onChange(of: viewModel.isDeleted) { isDeleted in
+            if isDeleted {
+                dismiss()  // Возвращаемся к списку курсов после удаления
+            }
         }
         .sheet(item: $selectedLesson) { lesson in
             LessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
         }
     }
-    
+
     // Секция редактирования курса
     private var editingSection: some View {
         VStack(spacing: 16) {
@@ -65,7 +68,6 @@ struct CourseDetailView: View {
                 .cornerRadius(10)
                 .shadow(radius: 2)
             
-            // Добавляем выбор валюты
             Picker("Валюта", selection: $newCurrency) {
                 ForEach(Currency.allCases, id: \.self) { currency in
                     Text(currency.rawValue).tag(currency)
@@ -104,7 +106,7 @@ struct CourseDetailView: View {
             }
         }
     }
-    
+
     // Секция отображения деталей курса
     private var courseDetailSection: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -149,7 +151,6 @@ struct CourseDetailView: View {
                 .foregroundColor(.white)
                 .padding(.bottom, 8)
             
-            // Отображение цены с учетом валюты
             Text("Цена: \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
                 .font(.title2)
                 .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
@@ -214,7 +215,7 @@ struct CourseDetailView: View {
             addBranchButton
         }
     }
-    
+
     // Кнопки действий
     private var actionButtons: some View {
         HStack(spacing: 16) {
@@ -248,7 +249,8 @@ struct CourseDetailView: View {
         }
         .padding(.top, 16)
     }
-    
+
+
     // Кнопка добавления ветки
     private var addBranchButton: some View {
         Button(action: {
@@ -277,14 +279,14 @@ struct CourseDetailView: View {
                 .background(Color(red: 44/255, green: 44/255, blue: 46/255))  // Темный фон для текста
                 .cornerRadius(10)
             
-            Button("Вернуться назад") {
-                presentationMode.wrappedValue.dismiss()  // Возврат на предыдущий экран (список курсов)
+            NavigationLink(destination: BloggerDashboardView()) {
+                Text("Вернуться на панель управления")
+                    .padding()
+                    .background(Color(red: 0/255, green: 122/255, blue: 255/255))  // Синий фон кнопки
+                    .foregroundColor(.white)  // Белый цвет текста кнопки
+                    .cornerRadius(10)
+                    .shadow(radius: 2)  // Тень для кнопки
             }
-            .padding()
-            .background(Color(red: 0/255, green: 122/255, blue: 255/255))  // Синий фон кнопки
-            .foregroundColor(.white)  // Белый цвет текста кнопки
-            .cornerRadius(10)
-            .shadow(radius: 2)  // Тень для кнопки
         }
         .padding()
         .background(Color(red: 44/255, green: 44/255, blue: 46/255))  // Темный фон для всего экрана
