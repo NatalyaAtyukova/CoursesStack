@@ -7,8 +7,14 @@ struct BloggerTabView: View {
         TabView {
             BloggerDashboardView()
                 .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Главная")
+                    Image(systemName: "list.bullet.clipboard.fill")
+                    Text("Мои курсы")
+                }
+            
+            CourseAccessRightsView()
+                .tabItem {
+                    Image(systemName: "lock.fill")
+                    Text("Права доступа")
                 }
 
             ProfileView(viewModel: ProfileViewModel())
@@ -17,11 +23,6 @@ struct BloggerTabView: View {
                     Text("Профиль")
                 }
 
-            CourseAccessRightsView()
-                .tabItem {
-                    Image(systemName: "lock.fill")
-                    Text("Права доступа")
-                }
         }
         .accentColor(.red)
         .onAppear {

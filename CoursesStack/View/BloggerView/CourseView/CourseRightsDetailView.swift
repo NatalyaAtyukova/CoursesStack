@@ -11,58 +11,50 @@ struct CourseRightsDetailView: View {
                     .foregroundColor(.white)
                     .padding()
             } else {
-                List(viewModel.accessRights) { rights in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Пользователь: \(rights.userID)")
-                                .foregroundColor(.white)
-                                .font(.headline)
-                            
-                            Text("ID курса: \(rights.courseID)")
-                                .foregroundColor(.gray)
-                                .font(.subheadline)
-                        }
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(viewModel.accessRights) { rights in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Пользователь: \(rights.userID)")
+                                        .foregroundColor(.white)
+                                        .font(.headline)
 
-                        Spacer()
+                                    Text("ID курса: \(rights.courseID)")
+                                        .foregroundColor(.gray)
+                                        .font(.subheadline)
+                                }
 
-                        Toggle(isOn: Binding<Bool>(
-                            get: { rights.canView },
-                            set: { newValue in
-                                viewModel.updateAccessRights(courseID: rights.courseID, userID: rights.userID, canView: newValue)
+                                Spacer()
+
+                                Toggle(isOn: Binding<Bool>(
+                                    get: { rights.canView },
+                                    set: { newValue in
+                                        viewModel.updateAccessRights(courseID: rights.courseID, userID: rights.userID, canView: newValue)
+                                    }
+                                )) {
+                                    Text("Может просматривать")
+                                        .foregroundColor(.white)
+                                }
                             }
-                        )) {
-                            Text("Может просматривать")
-                                .foregroundColor(.white)
+                            .padding()
+                            .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Фон карточки
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                            ) // Легкая окантовка
+                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5) // Тень для карточки
                         }
                     }
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
+                    .padding(.horizontal, 16) // Отступы по бокам
                 }
             }
         }
         .onAppear {
             viewModel.fetchAccessRights(for: course)
         }
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all)) // Темный фон
         .navigationTitle("Права для \(course.title)")
-    }
-}
-
-
-struct CourseRightsDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewModel = CourseAccessRightsViewModel()
-        let course = Course(id: "1", title: "Курс 1", description: "Описание курса 1", price: 29.99, currency: .dollar, coverImageURL: "", authorID: "author1", authorName: "Автор 1", branches: [], reviews: [], completedBranches: [:], purchasedBy: [])
-        
-        // Пример данных для прав доступа
-        viewModel.accessRights = [
-            CourseAccessRights(courseID: course.id, userID: "user1", canView: true),
-            CourseAccessRights(courseID: course.id, userID: "user2", canView: false)
-        ]
-        
-        return NavigationView {
-            CourseRightsDetailView(course: course, viewModel: viewModel)
-        }
     }
 }
