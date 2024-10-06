@@ -4,6 +4,7 @@ import FirebaseFirestore
 class UserViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var user: UserModel?
+    @Published var selectedCourse: Course?
     
     private let auth = Auth.auth()
     private let db = Firestore.firestore()

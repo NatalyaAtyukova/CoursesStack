@@ -29,6 +29,7 @@ struct BloggerDashboardView: View {
                                             .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Темный фон для строк списка
                                             .cornerRadius(12)
                                             .shadow(radius: 5) // Легкая тень для визуальной глубины
+                                        
                                     }
                                     .padding(.horizontal, 16) // Пространство по краям
                                 }
