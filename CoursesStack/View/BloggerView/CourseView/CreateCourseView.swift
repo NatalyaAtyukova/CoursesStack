@@ -18,22 +18,19 @@ struct CreateCourseView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
-    // Пример ID и имени автора (получаются через ViewModel или передаются при инициализации)
-    let authorID: String = "authorID_example"
-    let authorName: String = "Author Name"
-
     var body: some View {
         VStack(spacing: 16) {
             Group {
                 TextField("Название курса", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
+                    .foregroundColor(.black) // Изменение цвета текста на черный
+                
                 TextEditor(text: $description)
-                    .frame(height: 250)  // Увеличенное поле для описания
+                    .frame(height: 250)
                     .padding(12)
                     .background(Color(UIColor.systemGray6))
-                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
+                    .foregroundColor(.black)
                     .cornerRadius(8)
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(UIColor.systemGray3), lineWidth: 1))
@@ -43,9 +40,9 @@ struct CreateCourseView: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
+                    .foregroundColor(.black)
                     
-                // Добавляем выбор валюты
+                // Выбор валюты
                 Picker("Валюта", selection: $selectedCurrency) {
                     Text("USD").tag("USD")
                     Text("EUR").tag("EUR")
@@ -69,8 +66,8 @@ struct CreateCourseView: View {
                         Text("Выберите изображение обложки")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(red: 235/255, green: 64/255, blue: 52/255))  // Красная кнопка
-                            .foregroundColor(.white)  // Белый цвет текста
+                            .background(Color(red: 235/255, green: 64/255, blue: 52/255))
+                            .foregroundColor(.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
                     }
@@ -86,8 +83,8 @@ struct CreateCourseView: View {
                 Text("Создать курс")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))  // Красная кнопка
-                    .foregroundColor(.white)  // Белый цвет текста
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))
+                    .foregroundColor(.white)
                     .cornerRadius(10)
             }
             .padding(.horizontal)
@@ -96,7 +93,7 @@ struct CreateCourseView: View {
             Spacer()
         }
         .padding(.vertical, 20)
-        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))  // Темный фон для всего экрана
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
         .navigationTitle("Создание курса")
         .sheet(isPresented: $isImagePickerPresented) {
             ImagePicker(image: $coverImage)
@@ -122,15 +119,13 @@ struct CreateCourseView: View {
         isUploading = true
         uploadImage(image) { url in
             if let url = url {
-                // Передаем валюту и автора при создании курса
+                // Создание курса без указания authorID и authorName, они автоматически подтягиваются
                 viewModel.createCourse(
                     title: title,
                     description: description,
                     price: coursePrice,
                     currency: selectedCurrency,
-                    coverImageURL: url.absoluteString,
-                    authorID: authorID,
-                    authorName: authorName
+                    coverImageURL: url.absoluteString
                 )
                 presentationMode.wrappedValue.dismiss()
             } else {

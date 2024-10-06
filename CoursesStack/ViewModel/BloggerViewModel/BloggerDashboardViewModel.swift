@@ -25,20 +25,13 @@ class BloggerDashboardViewModel: ObservableObject {
                     self.courses = snapshot.documents.compactMap { doc in
                         let data = doc.data()
                         
-                        // Отладочные сообщения для диагностики
-                        print("Document data for course \(doc.documentID): \(data)")
-                        
                         // Загрузка веток курсов
                         let branchesData = data["branches"] as? [[String: Any]] ?? []
                         let branches: [CourseBranch] = branchesData.compactMap { branchData in
-                            print("Branch data for course \(doc.documentID): \(branchData)")
                             let lessonsData = branchData["lessons"] as? [[String: Any]] ?? []
                             let lessons: [Lesson] = lessonsData.compactMap { lessonData in
-                                print("Lesson data: \(lessonData)")
-                                
                                 let assignmentsData = lessonData["assignments"] as? [[String: Any]] ?? []
                                 let assignments: [Assignment] = assignmentsData.compactMap { assignmentData in
-                                    print("Assignment data: \(assignmentData)")
                                     return Assignment(
                                         id: assignmentData["id"] as? String ?? UUID().uuidString,
                                         title: assignmentData["title"] as? String ?? "",
@@ -78,7 +71,6 @@ class BloggerDashboardViewModel: ObservableObject {
                         // Загрузка отзывов
                         let reviewsData = data["reviews"] as? [[String: Any]] ?? []
                         let reviews: [Review] = reviewsData.compactMap { reviewData in
-                            print("Review data for course \(doc.documentID): \(reviewData)")
                             return Review(
                                 id: reviewData["id"] as? String ?? UUID().uuidString,
                                 userID: reviewData["userID"] as? String ?? "",
@@ -109,10 +101,9 @@ class BloggerDashboardViewModel: ObservableObject {
                 }
             }
     }
-    
 
     // Создание нового курса с URL изображения обложки
-    func createCourse(title: String, description: String, price: Double, currency: String, coverImageURL: String, authorID: String, authorName: String) {
+    func createCourse(title: String, description: String, price: Double, currency: String, coverImageURL: String) {
         guard let userID = userID else { return }
         
         // Сначала загрузим имя пользователя из коллекции "users" по userID
@@ -136,7 +127,8 @@ class BloggerDashboardViewModel: ObservableObject {
                 "authorID": userID,
                 "authorName": authorName, // Сохранение имени автора
                 "branches": [], // Пустой массив веток
-                "reviews": [] // Пустой массив отзывов
+                "reviews": [], // Пустой массив отзывов
+                "purchasedBy": [] // Пустой массив пользователей, купивших курс
             ] as [String: Any]
             
             // Сохраняем новый курс в коллекцию "courses"

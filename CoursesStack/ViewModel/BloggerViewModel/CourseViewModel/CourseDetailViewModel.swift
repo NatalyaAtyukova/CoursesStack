@@ -55,7 +55,8 @@ class CourseDetailViewModel: ObservableObject {
             "authorName": course.authorName,
             "branches": course.branches.map { $0.toDict() }, // Преобразуем ветки в словарь
             "reviews": course.reviews.map { $0.toDict() }, // Преобразуем отзывы в словарь
-            "completedBranches": course.completedBranches // Завершенные ветки курса
+            "completedBranches": course.completedBranches, // Завершенные ветки курса
+            "purchasedBy": course.purchasedBy // Сохраняем массив пользователей, купивших курс (пока пустой при создании)
         ]
 
         db.collection("courses").document(course.id).setData(courseData) { error in

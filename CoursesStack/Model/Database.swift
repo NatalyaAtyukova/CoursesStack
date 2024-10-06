@@ -42,14 +42,14 @@ struct Course: Identifiable, Decodable {
     var price: Double
     var currency: Currency
     var coverImageURL: String
-    var authorID: String
-    var authorName: String
+    var authorID: String?  // Поле опциональное
+    var authorName: String?  // Поле опциональное
     var branches: [CourseBranch]
     var reviews: [Review]
     var completedBranches: [String: Bool]
     var purchasedBy: [String]
 
-    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String, authorName: String, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool], purchasedBy: [String]) {
+    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String? = nil, authorName: String? = nil, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool], purchasedBy: [String]) {
         self.id = id
         self.title = title
         self.description = description
