@@ -76,33 +76,57 @@ class CourseViewModel: ObservableObject {
     }
 }
 
-// Extension для CourseBranch
+// Расширение для CourseBranch с методом toDict
 extension CourseBranch {
     func toDict() -> [String: Any] {
         return [
             "id": id,
             "title": title,
             "description": description,
-            "lessons": lessons.map { $0.toDict() } // Преобразование уроков в словарь
+            "lessons": lessons.map { $0.toDict() }
         ]
+    }
+    
+    static func fromDict(_ dict: [String: Any]) -> CourseBranch? {
+        guard let id = dict["id"] as? String,
+              let title = dict["title"] as? String,
+              let description = dict["description"] as? String,
+              let lessonsData = dict["lessons"] as? [[String: Any]] else { return nil }
+        
+        let lessons = lessonsData.compactMap { Lesson.fromDict($0) }
+        return CourseBranch(id: id, title: title, description: description, lessons: lessons)
     }
 }
 
-// Extension для Lesson
+// Расширение для Lesson с методом toDict
 extension Lesson {
     func toDict() -> [String: Any] {
         return [
             "id": id,
             "title": title,
             "content": content,
-            "videoURL": videoURL ?? "", // Сохранение URL видео, если есть
-            "assignments": assignments.map { $0.toDict() }, // Преобразование заданий в массив словарей
-            "downloadableFiles": downloadableFiles.map { $0.toDict() } // Преобразование файлов для скачивания в массив словарей
+            "videoURL": videoURL ?? "",
+            "assignments": assignments.map { $0.toDict() },
+            "downloadableFiles": downloadableFiles.map { $0.toDict() }
         ]
+    }
+    
+    static func fromDict(_ dict: [String: Any]) -> Lesson? {
+        guard let id = dict["id"] as? String,
+              let title = dict["title"] as? String,
+              let content = dict["content"] as? String else { return nil }
+        
+        let videoURL = dict["videoURL"] as? String
+        let assignmentsData = dict["assignments"] as? [[String: Any]] ?? []
+        let assignments = assignmentsData.compactMap { Assignment.fromDict($0) }
+        let filesData = dict["downloadableFiles"] as? [[String: Any]] ?? []
+        let downloadableFiles = filesData.compactMap { DownloadableFile.fromDict($0) }
+        
+        return Lesson(id: id, title: title, content: content, videoURL: videoURL, assignments: assignments, downloadableFiles: downloadableFiles)
     }
 }
 
-// Extension для Review
+// Расширение для Review с методом toDict
 extension Review {
     func toDict() -> [String: Any] {
         return [
@@ -112,21 +136,42 @@ extension Review {
             "rating": rating
         ]
     }
+    
+    static func fromDict(_ dict: [String: Any]) -> Review? {
+        guard let id = dict["id"] as? String,
+              let userID = dict["userID"] as? String,
+              let content = dict["content"] as? String,
+              let rating = dict["rating"] as? Int else { return nil }
+        
+        return Review(id: id, userID: userID, content: content, rating: rating)
+    }
 }
 
+// Расширение для Assignment с методом toDict
 extension Assignment {
     func toDict() -> [String: Any] {
         return [
             "id": id,
             "title": title,
-            "type": type.rawValue, // Преобразуем тип в строку
-            "choices": choices, // Firestore поддерживает массивы строк
+            "type": type.rawValue,
+            "choices": choices,
             "correctAnswer": correctAnswer
         ]
     }
+    
+    static func fromDict(_ dict: [String: Any]) -> Assignment? {
+        guard let id = dict["id"] as? String,
+              let title = dict["title"] as? String,
+              let typeString = dict["type"] as? String,
+              let type = AssignmentType(rawValue: typeString),
+              let choices = dict["choices"] as? [String],
+              let correctAnswer = dict["correctAnswer"] as? String else { return nil }
+        
+        return Assignment(id: id, title: title, type: type, choices: choices, correctAnswer: correctAnswer)
+    }
 }
 
-// Преобразование в словарь для Firestore
+// Расширение для DownloadableFile с методом toDict
 extension DownloadableFile {
     func toDict() -> [String: Any] {
         return [
@@ -134,5 +179,13 @@ extension DownloadableFile {
             "fileName": fileName,
             "fileURL": fileURL
         ]
+    }
+    
+    static func fromDict(_ dict: [String: Any]) -> DownloadableFile? {
+        guard let id = dict["id"] as? String,
+              let fileName = dict["fileName"] as? String,
+              let fileURL = dict["fileURL"] as? String else { return nil }
+        
+        return DownloadableFile(id: id, fileName: fileName, fileURL: fileURL)
     }
 }
