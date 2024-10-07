@@ -29,10 +29,11 @@ enum Currency: String, Codable, CaseIterable, Identifiable {
 }
 
 struct UserModel {
-    var id: String
-    var email: String
-    var role: String
-    var authorName: String? // Имя автора, опциональное для блогеров
+    let id: String
+    let email: String
+    let role: String
+    let authorName: String
+    let userName: String
 }
 
 struct Course: Identifiable, Decodable {
