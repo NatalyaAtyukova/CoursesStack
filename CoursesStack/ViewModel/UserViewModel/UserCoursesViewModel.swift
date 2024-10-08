@@ -32,9 +32,9 @@ class UserCoursesViewModel: ObservableObject {
             
             let allCourses = snapshot.documents.compactMap { document -> Course? in
                 print("Данные курса: \(document.data())")  // Диагностика данных
-                
-                return self.parseCourseData(data: document.data())
+                return self.parseCourseData(data: document.data(), documentID: document.documentID)
             }
+            
             
             // Разделение курсов на купленные и доступные на основе userID
             if let userID = Auth.auth().currentUser?.uid {
@@ -51,8 +51,8 @@ class UserCoursesViewModel: ObservableObject {
     }
     
     // Функция для разбора данных курса из Firestore
-    private func parseCourseData(data: [String: Any]) -> Course? {
-        let id = data["id"] as? String ?? UUID().uuidString
+    private func parseCourseData(data: [String: Any], documentID: String) -> Course? {
+        let id = documentID  // Используем ID документа напрямую
         let title = data["title"] as? String ?? "Нет названия"
         let description = (data["description"] as? String) ?? "\(data["description"] as? NSNumber ?? 0)"
         let price = data["price"] as? Double ?? 0.0

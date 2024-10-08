@@ -1,6 +1,7 @@
 import Foundation
-import FirebaseFirestore
 import FirebaseAuth
+import FirebaseFirestore
+import Combine
 
 class CoursePurchaseViewModel: ObservableObject {
     @Published var course: Course
@@ -8,46 +9,60 @@ class CoursePurchaseViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let db = Firestore.firestore()
-
+    
     init(course: Course) {
         self.course = course
-        checkIfPurchased() // Проверяем, куплен ли курс
+        print("Инициализация CoursePurchaseViewModel с course.id: \(course.id)") // Проверяем, какой ID передан
+        checkIfPurchased()
     }
-
-    // Проверка, куплен ли курс
+    
     func checkIfPurchased() {
         guard let userID = Auth.auth().currentUser?.uid else {
             self.errorMessage = "Необходимо авторизоваться"
             return
         }
-
-        // Проверяем, есть ли ID пользователя в списке купивших курс
+        
         isPurchased = course.purchasedBy.contains(userID)
     }
-
-    // Метод для покупки курса
+    
     func purchaseCourse() {
         guard let userID = Auth.auth().currentUser?.uid else {
             self.errorMessage = "Необходимо авторизоваться для покупки"
             return
         }
-
-        // Если курс уже куплен, выводим сообщение об ошибке
+        
         if isPurchased {
             self.errorMessage = "Этот курс уже куплен"
             return
         }
-
-        // Обновляем базу данных Firestore, добавляя пользователя в список купивших
-        db.collection("courses").document(course.id).updateData([
-            "purchasedBy": FieldValue.arrayUnion([userID])
-        ]) { error in
+        
+        // Печатаем ID перед обращением к Firestore
+        print("Попытка обновить документ с ID курса: \(course.id)")
+        
+        let courseRef = db.collection("courses").document(course.id)
+        
+        courseRef.getDocument { [weak self] (document, error) in
             if let error = error {
-                self.errorMessage = "Ошибка при покупке курса: \(error.localizedDescription)"
+                self?.errorMessage = "Ошибка при доступе к данным курса: \(error.localizedDescription)"
+                return
+            }
+            
+            if let document = document, document.exists {
+                courseRef.updateData([
+                    "purchasedBy": FieldValue.arrayUnion([userID])
+                ]) { error in
+                    if let error = error {
+                        self?.errorMessage = "Ошибка при покупке курса: \(error.localizedDescription)"
+                    } else {
+                        self?.course.purchasedBy.append(userID)
+                        self?.isPurchased = true
+                        self?.errorMessage = nil
+                        print("Курс успешно куплен!")
+                    }
+                }
             } else {
-                // Обновляем локальные данные
-                self.course.purchasedBy.append(userID)
-                self.isPurchased = true
+                self?.errorMessage = "Курс с указанным ID не найден: \(self?.course.id ?? "")"
+                print("Курс с ID \(self?.course.id ?? "") не найден.")
             }
         }
     }
