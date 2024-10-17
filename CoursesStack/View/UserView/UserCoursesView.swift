@@ -18,7 +18,7 @@ struct UserCoursesView: View {
                             } else {
                                 ForEach(viewModel.purchasedCourses) { course in
                                     // Отображение купленных курсов
-                                    NavigationLink(destination: CoursePurchaseView(viewModel: CoursePurchaseViewModel(course: course))) {
+                                    NavigationLink(destination: MyCourseDetailView(viewModel: MyCourseDetailViewModel(course: course))) {
                                         CourseRow(course: course)
                                     }
                                 }

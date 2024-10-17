@@ -10,7 +10,7 @@ class UserCoursesViewModel: ObservableObject {
     private let db = Firestore.firestore()
     
     init() {
-        fetchAllCourses() // Вызов fetchAllCourses вместо fetchUserCourses
+        fetchAllCourses() // Вызов fetchAllCourses
     }
     
     // Загрузка всех курсов и разделение на купленные и доступные
@@ -35,12 +35,12 @@ class UserCoursesViewModel: ObservableObject {
                 return self.parseCourseData(data: document.data(), documentID: document.documentID)
             }
             
-            
             // Разделение курсов на купленные и доступные на основе userID
             if let userID = Auth.auth().currentUser?.uid {
                 self.purchasedCourses = allCourses.filter { $0.purchasedBy.contains(userID) }
                 self.availableCourses = allCourses.filter { !$0.purchasedBy.contains(userID) }
             } else {
+                // Если пользователь не авторизован
                 self.availableCourses = allCourses
             }
             
@@ -54,7 +54,7 @@ class UserCoursesViewModel: ObservableObject {
     private func parseCourseData(data: [String: Any], documentID: String) -> Course? {
         let id = documentID  // Используем ID документа напрямую
         let title = data["title"] as? String ?? "Нет названия"
-        let description = (data["description"] as? String) ?? "\(data["description"] as? NSNumber ?? 0)"
+        let description = data["description"] as? String ?? "Описание отсутствует"
         let price = data["price"] as? Double ?? 0.0
         let currency = Currency(rawValue: data["currency"] as? String ?? "USD") ?? .dollar
         let coverImageURL = data["coverImageURL"] as? String ?? ""
