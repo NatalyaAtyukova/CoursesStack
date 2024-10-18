@@ -21,12 +21,34 @@ struct MyLessonDetailView: View {
                     .padding(.bottom, 20)
                 
                 // Воспроизведение видео, если есть URL
-                if let videoURL = viewModel.lesson.videoURL, let url = URL(string: videoURL) {
-                    VideoPlayerView(videoURL: url)
+                if let videoURL = viewModel.lesson.videoURL, !videoURL.isEmpty {
+                    WebView(url: URL(string: videoURL)!)
                         .frame(height: 250)
                         .cornerRadius(10)
                         .shadow(radius: 5)
                         .padding(.bottom, 20)
+                } else {
+                    Text("Видео не найдено")
+                        .font(.headline)
+                        .foregroundColor(.red)
+                }
+                
+                Divider()
+                
+                // Секция для заданий
+                Text("Задания и тесты")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.bottom, 8)
+                
+                if !viewModel.lesson.assignments.isEmpty {
+                    ForEach(viewModel.lesson.assignments, id: \.id) { assignment in
+                        AssignmentView(assignment: assignment)
+                    }
+                } else {
+                    Text("Нет доступных заданий")
+                        .font(.body)
+                        .foregroundColor(.gray)
                 }
                 
                 // Секция для файлов

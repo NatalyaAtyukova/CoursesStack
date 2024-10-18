@@ -63,8 +63,24 @@ class MyCourseDetailViewModel: ObservableObject {
                       let content = lessonDict["content"] as? String else {
                     return nil
                 }
+                
+                // Разбор видео и заданий
                 let videoURL = lessonDict["videoURL"] as? String
-                return Lesson(id: id, title: title, content: content, videoURL: videoURL, assignments: [], downloadableFiles: [])
+                let assignmentsData = lessonDict["assignments"] as? [[String: Any]] ?? []
+                let assignments = assignmentsData.compactMap { assignmentDict -> Assignment? in
+                    guard let id = assignmentDict["id"] as? String,
+                          let title = assignmentDict["title"] as? String,
+                          let typeRawValue = assignmentDict["type"] as? String,
+                          let type = AssignmentType(rawValue: typeRawValue),
+                          let correctAnswer = assignmentDict["correctAnswer"] as? String else {
+                        return nil
+                    }
+                    let choices = assignmentDict["choices"] as? [String] ?? []
+                    
+                    return Assignment(id: id, title: title, type: type, choices: choices, correctAnswer: correctAnswer)
+                }
+                
+                return Lesson(id: id, title: title, content: content, videoURL: videoURL, assignments: assignments, downloadableFiles: [])
             }
             
             return CourseBranch(id: id, title: title, description: description, lessons: lessons)
