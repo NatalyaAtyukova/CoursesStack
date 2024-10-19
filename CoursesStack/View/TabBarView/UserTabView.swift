@@ -29,6 +29,9 @@ struct UserTabView: View {
                     Text("Профиль")
                 }
         }
-        .accentColor(.blue) // Цвет выделенной вкладки
+        .accentColor(.red)
+        .onAppear {
+            UITabBar.appearance().unselectedItemTintColor = UIColor.white
+        }
     }
 }

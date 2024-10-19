@@ -77,3 +77,7 @@ struct CoursePurchaseView: View {
         .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для экрана
     }
 }
+
+
+
+
