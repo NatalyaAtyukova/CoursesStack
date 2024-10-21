@@ -4,6 +4,7 @@ struct MyCourseDetailView: View {
     @ObservedObject var viewModel: MyCourseDetailViewModel
     @State private var selectedLesson: Lesson?
     @State private var showingLessonDetail = false
+    @State private var showingReviewView = false  // Для управления отображением окна отзывов
 
     var body: some View {
         ScrollView {
@@ -97,15 +98,27 @@ struct MyCourseDetailView: View {
 
                 Divider()
 
-                // Вызов компонента для работы с отзывами
-                ReviewSection(viewModel: viewModel)  // Используем компонент ReviewSection
-
+                // Кнопка для перехода к отзывам
+                Button(action: {
+                    showingReviewView = true
+                }) {
+                    Text("Отзывы")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(.white)
+                        .background(Color(red: 235/255, green: 64/255, blue: 52/255))
+                        .cornerRadius(10)
+                }
             }
             .padding()
         }
         .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для экрана
         .sheet(item: $selectedLesson) { lesson in
             MyLessonDetailView(viewModel: LessonDetailViewModel(lesson: lesson, courseService: CourseService()))
+        }
+        .sheet(isPresented: $showingReviewView) {
+            ReviewsView(viewModel: viewModel)  // Переход к отдельному представлению отзывов
         }
     }
 }
