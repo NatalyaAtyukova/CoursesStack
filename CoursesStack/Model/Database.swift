@@ -46,11 +46,10 @@ struct Course: Identifiable, Decodable {
     var authorID: String?  // Поле опциональное
     var authorName: String?  // Поле опциональное
     var branches: [CourseBranch]
-    var reviews: [Review]
     var completedBranches: [String: Bool]
     var purchasedBy: [String]
 
-    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String? = nil, authorName: String? = nil, branches: [CourseBranch], reviews: [Review], completedBranches: [String: Bool], purchasedBy: [String]) {
+    init(id: String, title: String, description: String, price: Double, currency: Currency, coverImageURL: String, authorID: String? = nil, authorName: String? = nil, branches: [CourseBranch], completedBranches: [String: Bool], purchasedBy: [String]) {
         self.id = id
         self.title = title
         self.description = description
@@ -60,7 +59,6 @@ struct Course: Identifiable, Decodable {
         self.authorID = authorID
         self.authorName = authorName
         self.branches = branches
-        self.reviews = reviews
         self.completedBranches = completedBranches
         self.purchasedBy = purchasedBy
     }
@@ -103,11 +101,14 @@ struct DownloadableFile: Identifiable, Decodable {
     var fileURL: String
 }
 
-struct Review: Identifiable, Decodable {
+struct Review: Identifiable, Decodable, Encodable {
     var id: String
+    var courseID: String // Добавляем идентификатор курса
     var userID: String
     var content: String
     var rating: Int
+
+
 }
 
 struct CourseAccessRights: Identifiable, Decodable {

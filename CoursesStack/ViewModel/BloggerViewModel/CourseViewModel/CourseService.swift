@@ -96,7 +96,6 @@ class CourseService {
     }
     
     // Парсинг данных курса из Firebase
-    // Парсинг данных курса из Firebase
     private func parseCourseData(_ data: [String: Any]) -> Course? {
         guard let id = data["id"] as? String,
               let title = data["title"] as? String,
@@ -116,9 +115,7 @@ class CourseService {
             return self.parseBranchData(branchData)
         }
 
-        let reviews: [Review] = [] // Или парсинг, если данные есть в базе
-
-        // Получаем или инициализируем completedBranches и purchasedBy
+        // Отзывы больше не загружаются в структуре курса
         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
         let purchasedBy = data["purchasedBy"] as? [String] ?? []
 
@@ -133,7 +130,6 @@ class CourseService {
             authorID: authorID,
             authorName: authorName,
             branches: branches,
-            reviews: reviews,
             completedBranches: completedBranches,
             purchasedBy: purchasedBy
         )

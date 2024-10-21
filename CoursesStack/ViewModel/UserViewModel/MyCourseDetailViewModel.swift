@@ -1,16 +1,19 @@
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class MyCourseDetailViewModel: ObservableObject {
     @Published var course: Course
+    @Published var reviews: [Review] = []  // Хранение отзывов отдельно
     @Published var errorMessage: AlertMessage?
     private let db = Firestore.firestore()
-    
+
     init(course: Course) {
         self.course = course
         fetchCourseDetails()
+        fetchReviews()  // Загружаем отзывы отдельно при инициализации
     }
-    
+
     // Загрузка данных курса из Firestore
     func fetchCourseDetails() {
         let courseRef = db.collection("courses").document(course.id)
@@ -22,13 +25,8 @@ class MyCourseDetailViewModel: ObservableObject {
             }
             
             if let document = document, let data = document.data() {
-                // Печатаем загруженные данные
-                print("Загруженные данные курса: \(data)")
-                
                 if let parsedCourse = self?.parseCourseData(data: data, documentID: document.documentID) {
                     self?.course = parsedCourse
-                    // Печатаем количество веток
-                    print("Количество веток: \(self?.course.branches.count ?? 0)")
                 } else {
                     self?.errorMessage = AlertMessage(message: "Не удалось извлечь данные курса.")
                 }
@@ -37,7 +35,45 @@ class MyCourseDetailViewModel: ObservableObject {
             }
         }
     }
-    
+
+    // Загрузка отзывов для курса
+    func fetchReviews() {
+        db.collection("reviews").whereField("courseID", isEqualTo: course.id).getDocuments { [weak self] snapshot, error in
+            if let error = error {
+                self?.errorMessage = AlertMessage(message: "Ошибка при загрузке отзывов: \(error.localizedDescription)")
+                return
+            }
+            
+            self?.reviews = snapshot?.documents.compactMap { doc in
+                try? doc.data(as: Review.self)
+            } ?? []
+        }
+    }
+
+    // Функция для добавления отзыва
+    func addReview(content: String, rating: Int) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            self.errorMessage = AlertMessage(message: "Ошибка: пользователь не авторизован.")
+            return
+        }
+        
+        let review = Review(id: UUID().uuidString, courseID: course.id, userID: userID, content: content, rating: rating)
+        let reviewRef = db.collection("reviews").document(review.id)
+        
+        do {
+            try reviewRef.setData(from: review) { [weak self] error in
+                if let error = error {
+                    self?.errorMessage = AlertMessage(message: "Ошибка при добавлении отзыва: \(error.localizedDescription)")
+                } else {
+                    print("Отзыв успешно добавлен")
+                    self?.fetchReviews()  // Обновляем список отзывов
+                }
+            }
+        } catch {
+            self.errorMessage = AlertMessage(message: "Ошибка при сериализации отзыва.")
+        }
+    }
+
     // Функция для разбора данных курса
     private func parseCourseData(data: [String: Any], documentID: String) -> Course {
         let title = data["title"] as? String ?? "Нет названия"
@@ -45,8 +81,6 @@ class MyCourseDetailViewModel: ObservableObject {
         let price = data["price"] as? Double ?? 0.0
         let currency = Currency(rawValue: data["currency"] as? String ?? "USD") ?? .dollar
         let coverImageURL = data["coverImageURL"] as? String ?? ""
-        
-        // Разбор веток курса
         let branchesData = data["branches"] as? [[String: Any]] ?? []
         let branches = branchesData.compactMap { dict -> CourseBranch? in
             guard let id = dict["id"] as? String,
@@ -54,8 +88,6 @@ class MyCourseDetailViewModel: ObservableObject {
                   let description = dict["description"] as? String else {
                 return nil
             }
-            
-            // Разбор уроков в ветке
             let lessonsData = dict["lessons"] as? [[String: Any]] ?? []
             let lessons = lessonsData.compactMap { lessonDict -> Lesson? in
                 guard let id = lessonDict["id"] as? String,
@@ -63,8 +95,6 @@ class MyCourseDetailViewModel: ObservableObject {
                       let content = lessonDict["content"] as? String else {
                     return nil
                 }
-                
-                // Разбор видео и заданий
                 let videoURL = lessonDict["videoURL"] as? String
                 let assignmentsData = lessonDict["assignments"] as? [[String: Any]] ?? []
                 let assignments = assignmentsData.compactMap { assignmentDict -> Assignment? in
@@ -76,18 +106,13 @@ class MyCourseDetailViewModel: ObservableObject {
                         return nil
                     }
                     let choices = assignmentDict["choices"] as? [String] ?? []
-                    
                     return Assignment(id: id, title: title, type: type, choices: choices, correctAnswer: correctAnswer)
                 }
-                
                 return Lesson(id: id, title: title, content: content, videoURL: videoURL, assignments: assignments, downloadableFiles: [])
             }
-            
             return CourseBranch(id: id, title: title, description: description, lessons: lessons)
         }
-        
-        let reviewsData = data["reviews"] as? [[String: Any]] ?? []
-        let reviews = reviewsData.compactMap { Review.fromDict($0) }
+
         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
         let purchasedBy = data["purchasedBy"] as? [String] ?? []
         
@@ -101,7 +126,6 @@ class MyCourseDetailViewModel: ObservableObject {
             authorID: data["authorID"] as? String,
             authorName: data["authorName"] as? String,
             branches: branches,
-            reviews: reviews,
             completedBranches: completedBranches,
             purchasedBy: purchasedBy
         )

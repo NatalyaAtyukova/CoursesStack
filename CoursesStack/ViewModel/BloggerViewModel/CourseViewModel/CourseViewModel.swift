@@ -3,11 +3,13 @@ import FirebaseAuth
 
 class CourseViewModel: ObservableObject {
     @Published var course: Course
+    @Published var reviews: [Review] = []  // Отдельный массив для отзывов
     @Published var errorMessage: AlertMessage?
     private let db = Firestore.firestore()
     
     init(course: Course) {
         self.course = course
+        fetchReviews()  // Загружаем отзывы для курса при инициализации
     }
     
     // Добавление новой ветки
@@ -25,8 +27,8 @@ class CourseViewModel: ObservableObject {
                 title: title,
                 content: content,
                 videoURL: videoURL,
-                assignments: assignments, // Массив объектов Assignment
-                downloadableFiles: downloadableFiles // Массив объектов DownloadableFile
+                assignments: assignments,
+                downloadableFiles: downloadableFiles
             )
             course.branches[index].lessons.append(newLesson)
             saveCourse()
@@ -41,9 +43,37 @@ class CourseViewModel: ObservableObject {
             self.errorMessage = AlertMessage(message: "Необходимо авторизоваться")
             return
         }
-        let newReview = Review(id: UUID().uuidString, userID: userID, content: content, rating: rating)
-        course.reviews.append(newReview)
-        saveCourse()
+        
+        let newReview = Review(id: UUID().uuidString, courseID: course.id, userID: userID, content: content, rating: rating)
+        
+        // Сохранение отзыва в коллекцию "reviews"
+        let reviewRef = db.collection("reviews").document(newReview.id)
+        do {
+            try reviewRef.setData(from: newReview) { error in
+                if let error = error {
+                    self.errorMessage = AlertMessage(message: "Ошибка при добавлении отзыва: \(error.localizedDescription)")
+                } else {
+                    print("Отзыв успешно добавлен!")
+                    self.fetchReviews()  // Обновляем отзывы после добавления
+                }
+            }
+        } catch {
+            self.errorMessage = AlertMessage(message: "Ошибка при сериализации отзыва.")
+        }
+    }
+    
+    // Загрузка отзывов для данного курса
+    func fetchReviews() {
+        db.collection("reviews").whereField("courseID", isEqualTo: course.id).getDocuments { snapshot, error in
+            if let error = error {
+                self.errorMessage = AlertMessage(message: "Ошибка при загрузке отзывов: \(error.localizedDescription)")
+                return
+            }
+            
+            self.reviews = snapshot?.documents.compactMap { doc in
+                try? doc.data(as: Review.self)
+            } ?? []
+        }
     }
     
     // Сохранение курса в Firestore
@@ -58,14 +88,15 @@ class CourseViewModel: ObservableObject {
             "title": course.title,
             "description": course.description,
             "price": course.price,
+            "currency": course.currency.rawValue,
             "coverImageURL": course.coverImageURL,
-            "authorID": course.authorID,
-            "authorName": course.authorName,
-            "branches": course.branches.map { $0.toDict() }, // Преобразование веток в массив словарей
-            "reviews": course.reviews.map { $0.toDict() } // Преобразование отзывов в массив словарей
+            "authorID": course.authorID ?? "",
+            "authorName": course.authorName ?? "",
+            "branches": course.branches.map { $0.toDict() },
+            "completedBranches": course.completedBranches,
+            "purchasedBy": course.purchasedBy
         ]
         
-        // Сохранение данных в Firestore
         db.collection("courses").document(course.id).setData(courseData) { error in
             if let error = error {
                 self.errorMessage = AlertMessage(message: "Ошибка сохранения курса: \(error.localizedDescription)")
@@ -131,6 +162,7 @@ extension Review {
     func toDict() -> [String: Any] {
         return [
             "id": id,
+            "courseID": courseID,
             "userID": userID,
             "content": content,
             "rating": rating
@@ -139,11 +171,13 @@ extension Review {
     
     static func fromDict(_ dict: [String: Any]) -> Review? {
         guard let id = dict["id"] as? String,
+              let courseID = dict["courseID"] as? String,
               let userID = dict["userID"] as? String,
               let content = dict["content"] as? String,
-              let rating = dict["rating"] as? Int else { return nil }
-        
-        return Review(id: id, userID: userID, content: content, rating: rating)
+              let rating = dict["rating"] as? Int else {
+            return nil
+        }
+        return Review(id: id, courseID: courseID, userID: userID, content: content, rating: rating)
     }
 }
 

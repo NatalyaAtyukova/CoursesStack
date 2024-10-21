@@ -68,18 +68,7 @@ class BloggerDashboardViewModel: ObservableObject {
                             )
                         }
                         
-                        // Загрузка отзывов
-                        let reviewsData = data["reviews"] as? [[String: Any]] ?? []
-                        let reviews: [Review] = reviewsData.compactMap { reviewData in
-                            return Review(
-                                id: reviewData["id"] as? String ?? UUID().uuidString,
-                                userID: reviewData["userID"] as? String ?? "",
-                                content: reviewData["content"] as? String ?? "",
-                                rating: reviewData["rating"] as? Int ?? 0
-                            )
-                        }
-                        
-                        // Инициализация completedBranches (например, пустое состояние)
+                        // Убираем загрузку отзывов, так как они теперь хранятся в отдельной коллекции
                         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
                         let purchasedBy = data["purchasedBy"] as? [String] ?? []
 
@@ -93,7 +82,6 @@ class BloggerDashboardViewModel: ObservableObject {
                             authorID: data["authorID"] as? String ?? "",
                             authorName: data["authorName"] as? String ?? "",
                             branches: branches,
-                            reviews: reviews,
                             completedBranches: completedBranches,
                             purchasedBy: purchasedBy
                         )
@@ -127,7 +115,6 @@ class BloggerDashboardViewModel: ObservableObject {
                 "authorID": userID,
                 "authorName": authorName, // Сохранение имени автора
                 "branches": [], // Пустой массив веток
-                "reviews": [], // Пустой массив отзывов
                 "purchasedBy": [] // Пустой массив пользователей, купивших курс
             ] as [String: Any]
             

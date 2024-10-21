@@ -51,10 +51,9 @@ class CourseDetailViewModel: ObservableObject {
             "price": course.price,
             "currency": course.currency.rawValue, // Сохраняем строковое значение валюты
             "coverImageURL": course.coverImageURL, // Сохраняем URL обложки курса
-            "authorID": course.authorID,
-            "authorName": course.authorName,
+            "authorID": course.authorID ?? "",
+            "authorName": course.authorName ?? "",
             "branches": course.branches.map { $0.toDict() }, // Преобразуем ветки в словарь
-            "reviews": course.reviews.map { $0.toDict() }, // Преобразуем отзывы в словарь
             "completedBranches": course.completedBranches, // Завершенные ветки курса
             "purchasedBy": course.purchasedBy // Сохраняем массив пользователей, купивших курс (пока пустой при создании)
         ]

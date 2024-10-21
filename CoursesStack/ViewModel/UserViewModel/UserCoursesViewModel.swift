@@ -62,9 +62,7 @@ class UserCoursesViewModel: ObservableObject {
         let branchesData = data["branches"] as? [[String: Any]] ?? []
         let branches = branchesData.compactMap { CourseBranch.fromDict($0) }
         
-        let reviewsData = data["reviews"] as? [[String: Any]] ?? []
-        let reviews = reviewsData.compactMap { Review.fromDict($0) }
-        
+        // Убираем парсинг отзывов, так как они теперь хранятся в отдельной коллекции
         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
         let purchasedBy = data["purchasedBy"] as? [String] ?? []
         
@@ -78,7 +76,6 @@ class UserCoursesViewModel: ObservableObject {
             authorID: data["authorID"] as? String,
             authorName: data["authorName"] as? String,
             branches: branches,
-            reviews: reviews,
             completedBranches: completedBranches,
             purchasedBy: purchasedBy
         )

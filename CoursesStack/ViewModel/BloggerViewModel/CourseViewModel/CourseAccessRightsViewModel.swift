@@ -23,11 +23,9 @@ class CourseAccessRightsViewModel: ObservableObject {
 
                 if let snapshot = snapshot {
                     self.courses = snapshot.documents.compactMap { document in
-                        // Загружаем полные данные о курсе, включая ветки, уроки и отзывы
                         let data = document.data()
-                        print("Данные курса: \(data)")
-                        
-                        // Загружаем ветки и уроки так же, как в BloggerDashboardViewModel
+
+                        // Загружаем ветки и уроки, как в других viewModel
                         let branchesData = data["branches"] as? [[String: Any]] ?? []
                         let branches: [CourseBranch] = branchesData.compactMap { branchData in
                             let lessonsData = branchData["lessons"] as? [[String: Any]] ?? []
@@ -70,20 +68,10 @@ class CourseAccessRightsViewModel: ObservableObject {
                             )
                         }
 
-                        // Загрузка отзывов
-                        let reviewsData = data["reviews"] as? [[String: Any]] ?? []
-                        let reviews: [Review] = reviewsData.compactMap { reviewData in
-                            return Review(
-                                id: reviewData["id"] as? String ?? UUID().uuidString,
-                                userID: reviewData["userID"] as? String ?? "",
-                                content: reviewData["content"] as? String ?? "",
-                                rating: reviewData["rating"] as? Int ?? 0
-                            )
-                        }
-
                         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
                         let purchasedBy = data["purchasedBy"] as? [String] ?? []
 
+                        // Загружаем только данные о курсе (без отзывов, которые теперь отдельно)
                         return Course(
                             id: document.documentID,
                             title: data["title"] as? String ?? "",
@@ -94,7 +82,6 @@ class CourseAccessRightsViewModel: ObservableObject {
                             authorID: data["authorID"] as? String ?? "",
                             authorName: data["authorName"] as? String ?? "",
                             branches: branches,
-                            reviews: reviews,
                             completedBranches: completedBranches,
                             purchasedBy: purchasedBy
                         )
