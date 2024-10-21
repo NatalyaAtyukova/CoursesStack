@@ -74,6 +74,59 @@ class MyCourseDetailViewModel: ObservableObject {
         }
     }
 
+    // Функция для редактирования отзыва
+    func updateReview(review: Review, newContent: String, newRating: Int) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            self.errorMessage = AlertMessage(message: "Ошибка: пользователь не авторизован.")
+            return
+        }
+        
+        guard review.userID == userID else {
+            self.errorMessage = AlertMessage(message: "Ошибка: вы не можете редактировать этот отзыв.")
+            return
+        }
+        
+        let updatedReview = Review(id: review.id, courseID: review.courseID, userID: review.userID, content: newContent, rating: newRating)
+        let reviewRef = db.collection("reviews").document(review.id)
+        
+        do {
+            try reviewRef.setData(from: updatedReview) { [weak self] error in
+                if let error = error {
+                    self?.errorMessage = AlertMessage(message: "Ошибка при обновлении отзыва: \(error.localizedDescription)")
+                } else {
+                    print("Отзыв успешно обновлён")
+                    self?.fetchReviews()  // Обновляем список отзывов
+                }
+            }
+        } catch {
+            self.errorMessage = AlertMessage(message: "Ошибка при сериализации отзыва.")
+        }
+    }
+
+    // Функция для удаления отзыва
+    func deleteReview(review: Review) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            self.errorMessage = AlertMessage(message: "Ошибка: пользователь не авторизован.")
+            return
+        }
+        
+        guard review.userID == userID else {
+            self.errorMessage = AlertMessage(message: "Ошибка: вы не можете удалить этот отзыв.")
+            return
+        }
+
+        let reviewRef = db.collection("reviews").document(review.id)
+        
+        reviewRef.delete { [weak self] error in
+            if let error = error {
+                self?.errorMessage = AlertMessage(message: "Ошибка при удалении отзыва: \(error.localizedDescription)")
+            } else {
+                print("Отзыв успешно удалён")
+                self?.fetchReviews()  // Обновляем список отзывов
+            }
+        }
+    }
+
     // Функция для разбора данных курса
     private func parseCourseData(data: [String: Any], documentID: String) -> Course {
         let title = data["title"] as? String ?? "Нет названия"
