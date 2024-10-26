@@ -28,7 +28,7 @@ enum Currency: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-struct UserModel {
+struct UserModel: Identifiable, Decodable {
     let id: String
     let email: String
     let role: String

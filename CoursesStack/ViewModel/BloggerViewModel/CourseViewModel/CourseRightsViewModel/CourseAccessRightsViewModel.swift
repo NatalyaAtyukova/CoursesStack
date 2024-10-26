@@ -5,6 +5,7 @@ class CourseAccessRightsViewModel: ObservableObject {
     @Published var courses: [Course] = []
     @Published var selectedCourse: Course?
     @Published var accessRights: [CourseAccessRights] = []
+    @Published var reviews: [Review] = []
     @Published var errorMessage: String?
 
     // Получаем список курсов, которые принадлежат автору
@@ -13,7 +14,7 @@ class CourseAccessRightsViewModel: ObservableObject {
         let userID = Auth.auth().currentUser?.uid ?? ""
 
         db.collection("courses")
-            .whereField("authorID", isEqualTo: userID) // Фильтрация по автору
+            .whereField("authorID", isEqualTo: userID)
             .getDocuments { snapshot, error in
                 if let error = error {
                     self.errorMessage = error.localizedDescription
@@ -24,8 +25,6 @@ class CourseAccessRightsViewModel: ObservableObject {
                 if let snapshot = snapshot {
                     self.courses = snapshot.documents.compactMap { document in
                         let data = document.data()
-
-                        // Загружаем ветки и уроки, как в других viewModel
                         let branchesData = data["branches"] as? [[String: Any]] ?? []
                         let branches: [CourseBranch] = branchesData.compactMap { branchData in
                             let lessonsData = branchData["lessons"] as? [[String: Any]] ?? []
@@ -71,7 +70,6 @@ class CourseAccessRightsViewModel: ObservableObject {
                         let completedBranches = data["completedBranches"] as? [String: Bool] ?? [:]
                         let purchasedBy = data["purchasedBy"] as? [String] ?? []
 
-                        // Загружаем только данные о курсе (без отзывов, которые теперь отдельно)
                         return Course(
                             id: document.documentID,
                             title: data["title"] as? String ?? "",
@@ -112,7 +110,24 @@ class CourseAccessRightsViewModel: ObservableObject {
             }
     }
 
-    // Обновляем права доступа пользователя (например, право на просмотр курса)
+    // Получаем отзывы для выбранного курса
+    func fetchReviews(for course: Course) {
+        let db = Firestore.firestore()
+
+        db.collection("courses").document(course.id).collection("reviews")
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    self.errorMessage = error.localizedDescription
+                    return
+                }
+
+                self.reviews = snapshot?.documents.compactMap { document in
+                    try? document.data(as: Review.self)
+                } ?? []
+            }
+    }
+
+    // Обновляем права доступа пользователя
     func updateAccessRights(courseID: String, userID: String, canView: Bool) {
         let db = Firestore.firestore()
 

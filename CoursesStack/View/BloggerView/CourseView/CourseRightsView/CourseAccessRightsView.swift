@@ -13,7 +13,7 @@ struct CourseAccessRightsView: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         ForEach(viewModel.courses) { course in
-                            NavigationLink(destination: CourseRightsDetailView(course: course, viewModel: viewModel)) {
+                            NavigationLink(destination: CourseRightsDetailView(course: course, viewModel: CourseRightsDetailViewModel(course: course))) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(Color(red: 60/255, green: 60/255, blue: 62/255))
