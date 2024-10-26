@@ -8,14 +8,28 @@ struct CourseRightsDetailView: View {
         VStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Раздел отзывов
+                    // Статистика купивших пользователей
+                    Text("Купившие пользователи")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .padding(.top, 20)
+                    
+                    Text("Количество купивших пользователей: \(course.purchasedBy.count)")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color(red: 70/255, green: 70/255, blue: 72/255))
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
+
+                    // Раздел последних отзывов
                     if !viewModel.reviews.isEmpty {
                         Text("Отзывы")
                             .foregroundColor(.white)
                             .font(.title2)
                             .padding(.top, 10)
 
-                        ForEach(viewModel.reviews) { review in
+                        ForEach(viewModel.reviews.prefix(5)) { review in
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Пользователь: \(review.userID)")
                                     .foregroundColor(.white)
@@ -36,38 +50,17 @@ struct CourseRightsDetailView: View {
                             .cornerRadius(12)
                             .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
                         }
-                    } else {
-                        Text("Нет отзывов.")
-                            .foregroundColor(.gray)
-                            .padding(.vertical)
-                    }
 
-                    // Раздел пользователей, купивших курс
-                    if !viewModel.purchasedUsers.isEmpty {
-                        Text("Купившие пользователи")
-                            .foregroundColor(.white)
-                            .font(.title2)
-                            .padding(.top, 20)
-
-                        ForEach(viewModel.purchasedUsers) { user in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(user.userName)
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    Text("ID: \(user.id)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                            }
-                            .padding()
-                            .background(Color(red: 70/255, green: 70/255, blue: 72/255))
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
+                        // Навигация ко всем отзывам
+                        NavigationLink(destination: AllReviewsView(course: course, reviews: viewModel.reviews)) {
+                            Text("Посмотреть все отзывы")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(8)
                         }
                     } else {
-                        Text("Нет купивших пользователей.")
+                        Text("Нет отзывов.")
                             .foregroundColor(.gray)
                             .padding(.vertical)
                     }
@@ -77,7 +70,6 @@ struct CourseRightsDetailView: View {
         }
         .onAppear {
             viewModel.fetchReviews()
-            viewModel.fetchPurchasedUsers()
         }
         .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
         .navigationTitle("Детали курса: \(course.title)")
