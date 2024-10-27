@@ -54,20 +54,23 @@ struct CourseDetailView: View {
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+                .foregroundColor(.black)  // Черный текст
+                
             TextField("Описание", text: $newDescription)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+                .foregroundColor(.black)  // Черный текст
+                
             TextField("Цена", text: $newPrice)
                 .keyboardType(.decimalPad)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
-            
+                .foregroundColor(.black)  // Черный текст
+                
             Picker("Валюта", selection: $newCurrency) {
                 ForEach(Currency.allCases, id: \.self) { currency in
                     Text(currency.rawValue).tag(currency)
@@ -106,6 +109,7 @@ struct CourseDetailView: View {
             }
         }
     }
+
 
     // Секция отображения деталей курса
     private var courseDetailSection: some View {
@@ -200,8 +204,9 @@ struct CourseDetailView: View {
                                 .shadow(radius: 2)
                         }
                         .sheet(isPresented: $showingAddLesson) {
-                            if let branchID = selectedBranchID {
-                                AddLessonView(branchID: branchID, branchName: "Имя ветки", viewModel: viewModel)
+                            if let branchID = selectedBranchID,
+                               let branch = viewModel.course.branches.first(where: { $0.id == branchID }) {
+                                AddLessonView(branchID: branchID, branchName: branch.title, viewModel: viewModel)
                             }
                         }
                     }
