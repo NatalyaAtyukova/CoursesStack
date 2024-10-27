@@ -1,36 +1,33 @@
 import SwiftUI
 
-struct UserCoursesView: View {
-    @StateObject private var viewModel = UserCoursesViewModel()
+struct AllCoursesView: View {
+    @StateObject private var viewModel = UserCoursesViewModel() // Используем тот же ViewModel для курса
 
     var body: some View {
         NavigationView {
             ZStack {
-                // Темный фон для всего экрана
                 Color(red: 44/255, green: 44/255, blue: 46/255)
                     .edgesIgnoringSafeArea(.all)
-
+                
                 VStack {
                     if viewModel.isLoading {
                         ProgressView("Загрузка курсов...")
                             .foregroundColor(.white)
                     } else if let error = viewModel.errorMessage {
-                        // Отображение ошибки
                         Text(error)
                             .foregroundColor(.red)
                     } else {
                         ScrollView {
                             LazyVStack(spacing: 20) {
-                                // Раздел для купленных курсов
-                                if !viewModel.purchasedCourses.isEmpty {
+                                if !viewModel.availableCourses.isEmpty {
                                     VStack(alignment: .leading, spacing: 10) {
-                                        Text("Купленные курсы")
+                                        Text("Доступные курсы")
                                             .foregroundColor(.white)
                                             .font(.headline)
                                             .padding(.leading, 16)
-
-                                        ForEach(viewModel.purchasedCourses) { course in
-                                            NavigationLink(destination: MyCourseDetailView(viewModel: MyCourseDetailViewModel(course: course))) {
+                                        
+                                        ForEach(viewModel.availableCourses) { course in
+                                            NavigationLink(destination: CoursePurchaseView(viewModel: CoursePurchaseViewModel(course: course))) {
                                                 CourseRow(course: course)
                                                     .padding()
                                                     .background(Color(red: 60/255, green: 60/255, blue: 62/255))
@@ -41,7 +38,7 @@ struct UserCoursesView: View {
                                         }
                                     }
                                 } else {
-                                    Text("Вы еще не купили ни одного курса.")
+                                    Text("Нет доступных курсов для покупки.")
                                         .foregroundColor(.gray)
                                         .font(.subheadline)
                                         .padding(.top, 20)
@@ -50,7 +47,7 @@ struct UserCoursesView: View {
                         }
                     }
                 }
-                .navigationTitle("Мои курсы")
+                .navigationTitle("Все курсы")
                 .foregroundColor(.white)
             }
             .onAppear {

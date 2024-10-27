@@ -22,6 +22,13 @@ struct UserTabView: View {
                     }
             }
             
+            // Вкладка для просмотра всех курсов
+            AllCoursesView()
+                .tabItem {
+                    Image(systemName: "cart.fill")
+                    Text("Все курсы")
+                }
+            
             // Вкладка "Профиль"
             ProfileView(viewModel: profileViewModel)
                 .tabItem {
