@@ -6,7 +6,7 @@ struct CourseAccessRightsView: View {
     var body: some View {
         VStack {
             if viewModel.courses.isEmpty {
-                Text("Нет доступных курсов для управления правами.")
+                Text(NSLocalizedString("no_courses_for_management", comment: "")) // Локализованный текст при отсутствии курсов
                     .foregroundColor(.white)
                     .padding()
             } else {
@@ -25,7 +25,7 @@ struct CourseAccessRightsView: View {
                                             .foregroundColor(.white)
                                             .padding([.top, .horizontal], 16)
                                         
-                                        Text("Управление правами")
+                                        Text(NSLocalizedString("manage_rights", comment: "")) // Локализованный текст "Управление правами"
                                             .font(.subheadline)
                                             .foregroundColor(.gray)
                                             .padding([.horizontal, .bottom], 16)
@@ -42,17 +42,17 @@ struct CourseAccessRightsView: View {
         .onAppear {
             viewModel.fetchCourses()
         }
-        .navigationTitle("Управление правами")
-        .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон
+        .navigationTitle(NSLocalizedString("access_rights_title", comment: "")) // Локализованный заголовок экрана
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255))
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Button(action: {
                     // Действие для кнопки
                 }) {
-                    Text("Добавить курс")
-                        .foregroundColor(.white) // Белый цвет текста кнопки
+                    Text(NSLocalizedString("add_course_button", comment: "")) // Локализованный текст для кнопки "Добавить курс"
+                        .foregroundColor(.white)
                         .padding()
-                        .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                        .background(Color(red: 235/255, green: 64/255, blue: 52/255))
                         .cornerRadius(8)
                 }
             }

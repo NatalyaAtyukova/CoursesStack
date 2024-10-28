@@ -14,10 +14,10 @@ struct BloggerDashboardView: View {
                 VStack {
                     if viewModel.courses.isEmpty {
                         // Сообщение, если нет курсов
-                        Text("У вас пока нет курсов")
+                        Text(NSLocalizedString("no_courses_message", comment: "")) // Локализованное сообщение "У вас пока нет курсов"
                             .font(.headline)
-                            .foregroundColor(.white) // Белый текст
-                            .padding(.top, 20) // Более плотный отступ
+                            .foregroundColor(.white)
+                            .padding(.top, 20)
                     } else {
                         // Убираем белый фон у списка
                         ScrollView {
@@ -26,12 +26,11 @@ struct BloggerDashboardView: View {
                                     NavigationLink(destination: CourseDetailView(viewModel: CourseDetailViewModel(course: course))) {
                                         CourseRow(course: course)
                                             .padding()
-                                            .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Темный фон для строк списка
+                                            .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                                             .cornerRadius(12)
-                                            .shadow(radius: 5) // Легкая тень для визуальной глубины
-                                        
+                                            .shadow(radius: 5)
                                     }
-                                    .padding(.horizontal, 16) // Пространство по краям
+                                    .padding(.horizontal, 16)
                                 }
                             }
                         }
@@ -43,11 +42,11 @@ struct BloggerDashboardView: View {
                     Button(action: {
                         showingCreateCourse.toggle()
                     }) {
-                        Text("Создать курс")
+                        Text(NSLocalizedString("create_course_button", comment: "")) // Локализованная кнопка "Создать курс"
                             .font(.system(size: 18, weight: .bold))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                            .background(Color(red: 235/255, green: 64/255, blue: 52/255))
                             .foregroundColor(.white)
                             .cornerRadius(12)
                             .padding(.horizontal, 20)
@@ -60,7 +59,7 @@ struct BloggerDashboardView: View {
                 }
             }
             // Убираем заголовок навигации
-            .navigationBarHidden(true) // Скрыть заголовок
+            .navigationBarHidden(true)
             .onAppear {
                 viewModel.fetchCourses()
             }

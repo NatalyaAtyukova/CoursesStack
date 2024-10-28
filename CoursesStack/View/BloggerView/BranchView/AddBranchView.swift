@@ -9,23 +9,23 @@ struct AddBranchView: View {
     var body: some View {
         VStack(spacing: 16) {
             // Поле для ввода названия ветки
-            TextField("Название ветки", text: $branchTitle)
+            TextField("branch_name_placeholder", text: $branchTitle) // Локализованный placeholder
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
-                .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
+                .foregroundColor(.black)
             
             // Текстовый редактор для описания ветки
             VStack(alignment: .leading) {
-                Text("Описание ветки")
+                Text("branch_description_title") // Локализованный заголовок для описания
                     .font(.headline)
-                    .foregroundColor(.white) // Белый цвет текста заголовка
+                    .foregroundColor(.white)
                     .padding(.horizontal)
                 
                 TextEditor(text: $branchDescription)
-                    .frame(height: 150) // Устанавливаем высоту редактора
+                    .frame(height: 150)
                     .padding(.horizontal)
-                    .foregroundColor(.black) // Изменение цвета текста на черный (или любой другой)
-                    .background(Color(red: 60/255, green: 60/255, blue: 62/255)) // Цвет для поля ввода
+                    .foregroundColor(.black)
+                    .background(Color(red: 60/255, green: 60/255, blue: 62/255))
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
@@ -44,11 +44,11 @@ struct AddBranchView: View {
                 // Показываем уведомление
                 showAlert = true
             }) {
-                Text("Добавить ветку")
+                Text("add_branch_button") // Локализованный текст для кнопки
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
-                    .foregroundColor(.white) // Белый цвет текста кнопки
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))
+                    .foregroundColor(.white)
                     .cornerRadius(10)
             }
             .padding(.horizontal)
@@ -57,14 +57,14 @@ struct AddBranchView: View {
             Spacer()
         }
         .padding(.vertical, 20)
-        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all)) // Темный фон для экрана
-        .navigationTitle("Добавление ветки")
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
+        .navigationTitle("add_branch_title") // Локализованный заголовок экрана
         // Настройка алерта
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("Ветка добавлена"),
-                message: Text("Ветка успешно создана!"),
-                dismissButton: .default(Text("OK"))
+                title: Text("branch_added_alert_title"), // Локализованный заголовок для алерта
+                message: Text("branch_added_alert_message"), // Локализованное сообщение для алерта
+                dismissButton: .default(Text("ok_button")) // Локализованная кнопка OK
             )
         }
     }

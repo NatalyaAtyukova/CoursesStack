@@ -11,7 +11,7 @@ struct LessonDetailView: View {
     @State private var showingImagePicker = false
     @State private var newAssignments = [Assignment]()
     
-    @Environment(\.presentationMode) var presentationMode // Чтобы закрыть экран после удаления
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         ScrollView {
@@ -25,14 +25,13 @@ struct LessonDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Урок: \(viewModel.lesson.title)")
-        .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для всего экрана
+        .navigationTitle(String(format: NSLocalizedString("lesson_detail_title", comment: ""), viewModel.lesson.title)) // Локализованный заголовок "Урок: ..."
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255))
         .sheet(isPresented: $showingImagePicker) {
             PhotoPicker(selectedImage: $selectedImage)
         }
         .onChange(of: viewModel.isDeleted) { isDeleted in
             if isDeleted {
-                // Закрыть экран после успешного удаления урока
                 presentationMode.wrappedValue.dismiss()
             }
         }
@@ -40,7 +39,7 @@ struct LessonDetailView: View {
     
     private var editingSection: some View {
         VStack(spacing: 16) {
-            TextField("Текст урока", text: $newContent)
+            TextField(NSLocalizedString("lesson_text_placeholder", comment: ""), text: $newContent) // Локализованный placeholder для текста урока
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
@@ -49,11 +48,11 @@ struct LessonDetailView: View {
             Button(action: {
                 showingImagePicker = true
             }) {
-                Text("Загрузить файл")
+                Text(NSLocalizedString("upload_file_button", comment: "")) // Локализованный текст "Загрузить файл"
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
-                    .foregroundColor(.white) // Белый цвет текста
+                    .background(Color(red: 235/255, green: 64/255, blue: 52/255))
+                    .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }
@@ -67,27 +66,26 @@ struct LessonDetailView: View {
                     .shadow(radius: 5)
             }
             
-            TextField("URL видео", text: $newVideoURL)
+            TextField(NSLocalizedString("video_url_placeholder", comment: ""), text: $newVideoURL) // Локализованный placeholder для URL видео
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
                 .shadow(radius: 2)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("Редактировать задания")
+                Text(NSLocalizedString("edit_assignments_title", comment: "")) // Локализованный заголовок "Редактировать задания"
                     .font(.headline)
-                    .foregroundColor(.white) // Белый цвет текста
-                
+                    .foregroundColor(.white)
                 
                 ForEach(newAssignments.indices, id: \.self) { index in
                     VStack(alignment: .leading, spacing: 8) {
-                        TextField("Название задания", text: $newAssignments[index].title)
+                        TextField(NSLocalizedString("assignment_title_placeholder", comment: ""), text: $newAssignments[index].title) // Локализованный placeholder для названия задания
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 4)
                         
-                        Picker("Тип задания", selection: $newAssignments[index].type) {
-                            Text("Множественный выбор").tag(AssignmentType.multipleChoice)
-                            Text("Текстовый ответ").tag(AssignmentType.textAnswer)
+                        Picker(NSLocalizedString("assignment_type", comment: ""), selection: $newAssignments[index].type) { // Локализованный заголовок "Тип задания"
+                            Text(NSLocalizedString("multiple_choice", comment: "")).tag(AssignmentType.multipleChoice)
+                            Text(NSLocalizedString("text_answer", comment: "")).tag(AssignmentType.textAnswer)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.vertical, 4)
@@ -95,7 +93,7 @@ struct LessonDetailView: View {
                         if newAssignments[index].type == .multipleChoice {
                             ForEach(newAssignments[index].choices.indices, id: \.self) { choiceIndex in
                                 HStack {
-                                    TextField("Вариант \(choiceIndex + 1)", text: $newAssignments[index].choices[choiceIndex])
+                                    TextField(String(format: NSLocalizedString("choice_placeholder", comment: ""), choiceIndex + 1), text: $newAssignments[index].choices[choiceIndex]) // Локализованный placeholder "Вариант N"
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                     
                                     Toggle(isOn: Binding<Bool>(
@@ -108,7 +106,7 @@ struct LessonDetailView: View {
                                             }
                                         }
                                     )) {
-                                        Text("Правильный")
+                                        Text(NSLocalizedString("correct_answer_label", comment: "")) // Локализованный текст "Правильный"
                                     }
                                     
                                     Button(action: {
@@ -123,22 +121,22 @@ struct LessonDetailView: View {
                             Button(action: {
                                 newAssignments[index].choices.append("")
                             }) {
-                                Text("Добавить вариант ответа")
+                                Text(NSLocalizedString("add_choice_button", comment: "")) // Локализованная кнопка "Добавить вариант ответа"
                                     .padding(.horizontal)
                                     .padding(.vertical, 8)
                                     .background(Color.blue)
-                                    .foregroundColor(.white) // Белый цвет текста
+                                    .foregroundColor(.white)
                                     .cornerRadius(8)
                             }
                         }
                     }
                 }
                 Button(action: addNewAssignment) {
-                    Text("Добавить задание")
+                    Text(NSLocalizedString("add_assignment_button", comment: "")) // Локализованная кнопка "Добавить задание"
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
-                        .foregroundColor(.white) // Белый цвет текста
+                        .foregroundColor(.white)
                         .cornerRadius(10)
                 }
             }
@@ -148,11 +146,11 @@ struct LessonDetailView: View {
                     viewModel.updateLesson(content: newContent, videoURL: newVideoURL, assignments: newAssignments)
                     isEditing = false
                 }) {
-                    Text("Сохранить")
+                    Text(NSLocalizedString("save_button", comment: "")) // Локализованная кнопка "Сохранить"
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.green)
-                        .foregroundColor(.white) // Белый цвет текста
+                        .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
@@ -160,11 +158,11 @@ struct LessonDetailView: View {
                 Button(action: {
                     isEditing = false
                 }) {
-                    Text("Отменить")
+                    Text(NSLocalizedString("cancel_button", comment: "")) // Локализованная кнопка "Отменить"
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.red)
-                        .foregroundColor(.white) // Белый цвет текста
+                        .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
@@ -179,7 +177,7 @@ struct LessonDetailView: View {
                 .foregroundColor(.white) // Белый цвет текста
             
             if let errorMessage = viewModel.errorMessage {
-                Text("Ошибка: \(errorMessage)")
+                Text(String(format: NSLocalizedString("lesson_error_label", comment: ""), errorMessage)) // Локализованное сообщение об ошибке
                     .foregroundColor(.red)
             }
 
@@ -191,9 +189,9 @@ struct LessonDetailView: View {
             
             Divider()
             
-            Text("Задания и тесты")
+            Text(NSLocalizedString("lesson_assignments_title", comment: "")) // Локализованный заголовок "Задания и тесты"
                 .font(.headline)
-                .foregroundColor(.white) // Белый цвет текста
+                .foregroundColor(.white)
                 .padding(.bottom, 8)
             
             if !viewModel.lesson.assignments.isEmpty {
@@ -201,13 +199,13 @@ struct LessonDetailView: View {
                     AssignmentView(assignment: assignment)
                 }
             } else {
-                Text("Нет доступных заданий")
+                Text(NSLocalizedString("no_assignments_available", comment: "")) // Локализованный текст "Нет доступных заданий"
                     .font(.body)
                     .foregroundColor(.gray)
             }
         }
     }
-    
+
     private var actionButtons: some View {
         HStack(spacing: 16) {
             Button(action: {
@@ -216,24 +214,23 @@ struct LessonDetailView: View {
                 newAssignments = viewModel.lesson.assignments
                 isEditing = true
             }) {
-                Text("Редактировать")
+                Text(NSLocalizedString("edit_button", comment: "")) // Локализованная кнопка "Редактировать"
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color(red: 60/255, green: 60/255, blue: 62/255))
-                    .foregroundColor(.white) // Белый цвет текста
+                    .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }
             
             Button(action: {
-                print("Кнопка 'Удалить урок' нажата") // Для отладки
                 viewModel.deleteLesson()
             }) {
-                Text("Удалить урок")
+                Text(NSLocalizedString("delete_lesson_button", comment: "")) // Локализованная кнопка "Удалить урок"
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color(red: 60/255, green: 60/255, blue: 62/255))
-                    .foregroundColor(.white) // Белый цвет текста
+                    .foregroundColor(.white)
                     .cornerRadius(10)
                     .shadow(radius: 2)
             }

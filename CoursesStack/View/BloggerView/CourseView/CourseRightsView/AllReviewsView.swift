@@ -6,7 +6,7 @@ struct AllReviewsView: View {
 
     var body: some View {
         VStack {
-            Text("Все отзывы для \(course.title)")
+            Text(String(format: NSLocalizedString("all_reviews_for_course", comment: ""), course.title)) // Локализованный заголовок с названием курса
                 .font(.title)
                 .foregroundColor(.white)
                 .padding()
@@ -15,12 +15,12 @@ struct AllReviewsView: View {
                 VStack(spacing: 10) {
                     ForEach(reviews) { review in
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Пользователь: \(review.userID)")
+                            Text(String(format: NSLocalizedString("user_label", comment: ""), review.userID)) // Локализованная метка пользователя
                                 .foregroundColor(.white)
                                 .font(.headline)
                             
                             HStack {
-                                Text("Рейтинг:")
+                                Text(NSLocalizedString("rating_label", comment: "")) // Локализованная метка рейтинга
                                 Text(String(repeating: "⭐️", count: review.rating))
                             }
                             .foregroundColor(.yellow)
@@ -39,7 +39,7 @@ struct AllReviewsView: View {
             }
             .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
         }
-        .navigationTitle("Все отзывы")
-        .navigationBarTitleDisplayMode(.inline) // Устанавливаем заголовок по центру
+        .navigationTitle(NSLocalizedString("all_reviews_title", comment: "")) // Локализованный заголовок экрана
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

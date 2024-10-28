@@ -117,11 +117,12 @@
 				};
 			};
 			buildConfigurationList = C81EA1212C9B0D8000962AB0 /* Build configuration list for PBXProject "CoursesStack" */;
-			developmentRegion = en;
+			developmentRegion = ru;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = C81EA11D2C9B0D8000962AB0;
 			minimizedProjectReferenceProxies = 1;

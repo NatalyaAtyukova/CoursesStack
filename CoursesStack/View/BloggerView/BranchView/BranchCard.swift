@@ -25,7 +25,7 @@ struct BranchCard: View {
                     
                 // Проверка на наличие уроков в ветке
                 if branch.lessons.isEmpty {
-                    Text("Нет уроков")
+                    Text(LocalizedStringKey("no_lessons")) // Локализованный текст "Нет уроков"
                         .font(.body)
                         .foregroundColor(.gray)
                 } else {

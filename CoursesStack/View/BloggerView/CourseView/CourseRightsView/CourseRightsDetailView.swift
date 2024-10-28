@@ -9,12 +9,12 @@ struct CourseRightsDetailView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     // Статистика купивших пользователей
-                    Text("Купившие пользователи")
+                    Text(NSLocalizedString("purchased_users_title", comment: "")) // Локализованный заголовок "Купившие пользователи"
                         .foregroundColor(.white)
                         .font(.title2)
                         .padding(.top, 20)
                     
-                    Text("Количество купивших пользователей: \(course.purchasedBy.count)")
+                    Text(String(format: NSLocalizedString("purchased_user_count", comment: ""), course.purchasedBy.count)) // Локализованный текст с количеством купивших пользователей
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -24,19 +24,19 @@ struct CourseRightsDetailView: View {
 
                     // Раздел последних отзывов
                     if !viewModel.reviews.isEmpty {
-                        Text("Отзывы")
+                        Text(NSLocalizedString("reviews_title", comment: "")) // Локализованный заголовок "Отзывы"
                             .foregroundColor(.white)
                             .font(.title2)
                             .padding(.top, 10)
 
                         ForEach(viewModel.reviews.prefix(5)) { review in
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Пользователь: \(review.userID)")
+                                Text(String(format: NSLocalizedString("user_label", comment: ""), review.userID)) // Локализованная метка пользователя
                                     .foregroundColor(.white)
                                     .font(.headline)
 
                                 HStack {
-                                    Text("Рейтинг:")
+                                    Text(NSLocalizedString("rating_label", comment: "")) // Локализованная метка рейтинга
                                     Text(String(repeating: "⭐️", count: review.rating))
                                 }
                                 .foregroundColor(.yellow)
@@ -53,14 +53,14 @@ struct CourseRightsDetailView: View {
 
                         // Навигация ко всем отзывам
                         NavigationLink(destination: AllReviewsView(course: course, reviews: viewModel.reviews)) {
-                            Text("Посмотреть все отзывы")
+                            Text(NSLocalizedString("view_all_reviews", comment: "")) // Локализованный текст "Посмотреть все отзывы"
                                 .foregroundColor(.white)
                                 .padding()
                                 .background(Color.blue)
                                 .cornerRadius(8)
                         }
                     } else {
-                        Text("Нет отзывов.")
+                        Text(NSLocalizedString("no_reviews", comment: "")) // Локализованный текст "Нет отзывов"
                             .foregroundColor(.gray)
                             .padding(.vertical)
                     }
@@ -72,6 +72,6 @@ struct CourseRightsDetailView: View {
             viewModel.fetchReviews()
         }
         .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
-        .navigationTitle("Детали курса: \(course.title)")
+        .navigationTitle(String(format: NSLocalizedString("course_details_title", comment: ""), course.title)) // Локализованный заголовок экрана
     }
 }

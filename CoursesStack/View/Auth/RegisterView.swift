@@ -12,16 +12,16 @@ struct RegisterView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 28/255, green: 28/255, blue: 30/255)  // Мягкий темно-серый фон
+            Color(red: 28/255, green: 28/255, blue: 30/255)
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 20) {
-                Text("Регистрация")
+                Text("register_title") // Локализованный заголовок
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))  // Мягкий красный цвет
+                    .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                 
-                TextField("Email", text: $email)
+                TextField("email_placeholder", text: $email) // Локализованный placeholder для Email
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding()
                     .background(Color(white: 0.9))
@@ -29,26 +29,25 @@ struct RegisterView: View {
                     .foregroundColor(.black)
                     .autocapitalization(.none)
                 
-                SecureField("Пароль", text: $password)
+                SecureField("password_placeholder", text: $password) // Локализованный placeholder для пароля
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding()
                     .background(Color(white: 0.9))
                     .cornerRadius(8)
                     .foregroundColor(.black)
                 
-                // Выбор роли
-                Picker("Выберите вашу роль", selection: $selectedRole) {
-                    Text("Пользователь").tag("user")
-                    Text("Блогер").tag("blogger")
+                Picker("role_picker", selection: $selectedRole) { // Локализованный текст для выбора роли
+                    Text("user_role").tag("user") // Локализованный текст для "Пользователь"
+                    Text("blogger_role").tag("blogger") // Локализованный текст для "Блогер"
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
                 .background(Color(red: 235/255, green: 64/255, blue: 52/255).opacity(0.8))
                 .cornerRadius(8)
                 
-                // Поле для имени пользователя, отображается, если роль "user"
+                // Поле для имени пользователя, если роль "user"
                 if selectedRole == "user" {
-                    TextField("Имя пользователя", text: $userName)
+                    TextField("username_placeholder", text: $userName) // Локализованный placeholder для имени пользователя
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding()
                         .background(Color(white: 0.9))
@@ -57,9 +56,9 @@ struct RegisterView: View {
                         .autocapitalization(.words)
                 }
                 
-                // Поле для имени автора, отображается, если роль "blogger"
+                // Поле для имени автора, если роль "blogger"
                 if selectedRole == "blogger" {
-                    TextField("Имя автора", text: $authorName)
+                    TextField("authorname_placeholder", text: $authorName) // Локализованный placeholder для имени автора
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding()
                         .background(Color(white: 0.9))
@@ -69,7 +68,7 @@ struct RegisterView: View {
                 }
                 
                 Button(action: register) {
-                    Text("Регистрация")
+                    Text("register_button") // Локализованный текст для кнопки
                         .fontWeight(.bold)
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .padding()
@@ -80,7 +79,7 @@ struct RegisterView: View {
                 .padding(.top, 20)
                 
                 if !errorMessage.isEmpty {
-                    Text(errorMessage)
+                    Text(errorMessage) // Сообщение об ошибке, выводимое как есть
                         .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                         .padding()
                 }
@@ -94,12 +93,12 @@ struct RegisterView: View {
     func register() {
         // Проверка на заполнение имени в зависимости от роли
         if selectedRole == "user" && userName.isEmpty {
-            self.errorMessage = "Введите имя пользователя."
+            self.errorMessage = NSLocalizedString("user_name_error", comment: "Error message for empty username")
             return
         }
         
         if selectedRole == "blogger" && authorName.isEmpty {
-            self.errorMessage = "Введите имя автора."
+            self.errorMessage = NSLocalizedString("author_name_error", comment: "Error message for empty author name")
             return
         }
         

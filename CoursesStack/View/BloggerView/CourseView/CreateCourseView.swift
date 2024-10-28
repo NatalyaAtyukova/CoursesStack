@@ -9,7 +9,7 @@ struct CreateCourseView: View {
     @State private var title = ""
     @State private var description = ""
     @State private var price = ""
-    @State private var selectedCurrency = "USD" // Валюта по умолчанию
+    @State private var selectedCurrency = "USD"
     @State private var coverImage: UIImage?
     @State private var isImagePickerPresented = false
     @State private var isUploading = false
@@ -21,10 +21,10 @@ struct CreateCourseView: View {
     var body: some View {
         VStack(spacing: 16) {
             Group {
-                TextField("Название курса", text: $title)
+                TextField(NSLocalizedString("course_title_placeholder", comment: ""), text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
-                    .foregroundColor(.black) // Изменение цвета текста на черный
+                    .foregroundColor(.black)
                 
                 TextEditor(text: $description)
                     .frame(height: 250)
@@ -36,14 +36,14 @@ struct CreateCourseView: View {
                         .stroke(Color(UIColor.systemGray3), lineWidth: 1))
                     .padding(.horizontal)
                 
-                TextField("Цена курса", text: $price)
+                TextField(NSLocalizedString("course_price_placeholder", comment: ""), text: $price)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                     .foregroundColor(.black)
                     
                 // Выбор валюты
-                Picker("Валюта", selection: $selectedCurrency) {
+                Picker(NSLocalizedString("currency_picker", comment: ""), selection: $selectedCurrency) {
                     Text("USD").tag("USD")
                     Text("EUR").tag("EUR")
                     Text("RUB").tag("RUB")
@@ -63,7 +63,7 @@ struct CreateCourseView: View {
                             .cornerRadius(8)
                             .padding(.horizontal)
                     } else {
-                        Text("Выберите изображение обложки")
+                        Text(NSLocalizedString("select_cover_image", comment: "")) // Локализованный текст "Выберите изображение обложки"
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color(red: 235/255, green: 64/255, blue: 52/255))
@@ -80,7 +80,7 @@ struct CreateCourseView: View {
             }
             
             Button(action: createCourse) {
-                Text("Создать курс")
+                Text(NSLocalizedString("create_course_button", comment: "")) // Локализованный текст "Создать курс"
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color(red: 235/255, green: 64/255, blue: 52/255))
@@ -94,24 +94,26 @@ struct CreateCourseView: View {
         }
         .padding(.vertical, 20)
         .background(Color(red: 44/255, green: 44/255, blue: 46/255).edgesIgnoringSafeArea(.all))
-        .navigationTitle("Создание курса")
+        .navigationTitle(NSLocalizedString("course_creation_title", comment: "")) // Локализованный заголовок "Создание курса"
         .sheet(isPresented: $isImagePickerPresented) {
             ImagePicker(image: $coverImage)
         }
         .alert(isPresented: $showAlert) {
-            Alert(title: Text("Ошибка"), message: Text(alertMessage), dismissButton: .default(Text("ОК")))
+            Alert(title: Text(NSLocalizedString("error_title", comment: "")),
+                  message: Text(alertMessage),
+                  dismissButton: .default(Text(NSLocalizedString("ok_button", comment: "")))) // Локализованная кнопка "ОК"
         }
     }
     
     func createCourse() {
         guard !title.isEmpty, !description.isEmpty, !price.isEmpty else {
-            alertMessage = "Заполните все поля!"
+            alertMessage = NSLocalizedString("fill_all_fields_error", comment: "") // Локализованное сообщение "Заполните все поля"
             showAlert = true
             return
         }
         
         guard let image = coverImage, let coursePrice = Double(price) else {
-            alertMessage = "Пожалуйста, выберите изображение обложки и укажите корректную цену!"
+            alertMessage = NSLocalizedString("choose_image_and_valid_price_error", comment: "") // Локализованное сообщение "Пожалуйста, выберите изображение обложки и укажите корректную цену"
             showAlert = true
             return
         }
@@ -119,7 +121,6 @@ struct CreateCourseView: View {
         isUploading = true
         uploadImage(image) { url in
             if let url = url {
-                // Создание курса без указания authorID и authorName, они автоматически подтягиваются
                 viewModel.createCourse(
                     title: title,
                     description: description,
@@ -129,13 +130,13 @@ struct CreateCourseView: View {
                 )
                 presentationMode.wrappedValue.dismiss()
             } else {
-                alertMessage = "Не удалось загрузить изображение. Пожалуйста, попробуйте ещё раз."
+                alertMessage = NSLocalizedString("upload_image_error", comment: "") // Локализованное сообщение "Не удалось загрузить изображение. Пожалуйста, попробуйте ещё раз"
                 showAlert = true
             }
             isUploading = false
         }
     }
-
+    
     func uploadImage(_ image: UIImage, completion: @escaping (URL?) -> Void) {
         let storage = Storage.storage()
         let storageRef = storage.reference().child("course_images/\(UUID().uuidString).jpg")
