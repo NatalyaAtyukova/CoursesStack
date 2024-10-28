@@ -15,7 +15,7 @@ struct MainView: View {
                 }
             } else {
                 // Пока загружаются данные пользователя
-                ProgressView("Загрузка...")
+                ProgressView(NSLocalizedString("loading_message", comment: "")) // Локализованное сообщение "Загрузка..."
             }
         } else {
             // Если не авторизован, показываем экраны логина/регистрации

@@ -12,7 +12,7 @@ struct UserCoursesView: View {
 
                 VStack {
                     if viewModel.isLoading {
-                        ProgressView("Загрузка курсов...")
+                        ProgressView(NSLocalizedString("loading_courses", comment: ""))
                             .foregroundColor(.white)
                     } else if let error = viewModel.errorMessage {
                         // Отображение ошибки
@@ -24,7 +24,7 @@ struct UserCoursesView: View {
                                 // Раздел для купленных курсов
                                 if !viewModel.purchasedCourses.isEmpty {
                                     VStack(alignment: .leading, spacing: 10) {
-                                        Text("Купленные курсы")
+                                        Text(NSLocalizedString("purchased_courses", comment: ""))
                                             .foregroundColor(.white)
                                             .font(.headline)
                                             .padding(.leading, 16)
@@ -41,7 +41,7 @@ struct UserCoursesView: View {
                                         }
                                     }
                                 } else {
-                                    Text("Вы еще не купили ни одного курса.")
+                                    Text(NSLocalizedString("no_purchased_courses", comment: ""))
                                         .foregroundColor(.gray)
                                         .font(.subheadline)
                                         .padding(.top, 20)
@@ -50,7 +50,7 @@ struct UserCoursesView: View {
                         }
                     }
                 }
-                .navigationTitle("Мои курсы")
+                .navigationTitle(NSLocalizedString("my_courses_title", comment: ""))
                 .foregroundColor(.white)
             }
             .onAppear {

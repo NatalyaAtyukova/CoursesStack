@@ -6,7 +6,7 @@ struct ReviewCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Оценка: ")
+                Text(NSLocalizedString("rating_label", comment: "")) // Локализованный текст "Оценка: "
                     .font(.subheadline)
                 HStack(spacing: 2) {
                     ForEach(1...5, id: \.self) { index in

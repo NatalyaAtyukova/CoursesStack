@@ -10,7 +10,7 @@ struct UserTabView: View {
             UserCoursesView()
                 .tabItem {
                     Image(systemName: "book.fill")
-                    Text("Мои курсы")
+                    Text(NSLocalizedString("user_courses_tab", comment: "")) // Локализованный текст "Мои курсы"
                 }
             
             // Проверка на наличие выбранного курса
@@ -18,7 +18,7 @@ struct UserTabView: View {
                 CourseDetailView(viewModel: CourseDetailViewModel(course: selectedCourse))
                     .tabItem {
                         Image(systemName: "doc.text.fill")
-                        Text("Управление курсами")
+                        Text(NSLocalizedString("course_management_tab", comment: "")) // Локализованный текст "Управление курсами"
                     }
             }
             
@@ -26,14 +26,14 @@ struct UserTabView: View {
             AllCoursesView()
                 .tabItem {
                     Image(systemName: "cart.fill")
-                    Text("Все курсы")
+                    Text(NSLocalizedString("all_courses_tab", comment: "")) // Локализованный текст "Все курсы"
                 }
             
             // Вкладка "Профиль"
             ProfileView(viewModel: profileViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
-                    Text("Профиль")
+                    Text(NSLocalizedString("profile_tab", comment: "")) // Локализованный текст "Профиль"
                 }
         }
         .accentColor(.red)

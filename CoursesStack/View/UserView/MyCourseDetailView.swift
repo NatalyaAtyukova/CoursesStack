@@ -52,7 +52,7 @@ struct MyCourseDetailView: View {
                     .foregroundColor(.white)
                     .padding(.bottom, 8)
 
-                Text("Цена: \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
+                Text(String(format: NSLocalizedString("price_label", comment: ""), viewModel.course.price, viewModel.course.currency.symbol))
                     .font(.title2)
                     .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                     .padding(.top, 8)
@@ -60,7 +60,7 @@ struct MyCourseDetailView: View {
                 Divider()
 
                 // Отображение веток курса
-                Text("Шаги курса")
+                Text(NSLocalizedString("course_steps_label", comment: ""))
                     .font(.headline)
                     .padding(.bottom, 8)
 
@@ -77,7 +77,7 @@ struct MyCourseDetailView: View {
                                 }
                             )
 
-                            Text("Уроки:")
+                            Text(NSLocalizedString("lessons_label", comment: ""))
                                 .font(.subheadline)
                                 .padding(.top, 8)
 
@@ -91,7 +91,7 @@ struct MyCourseDetailView: View {
                         }
                     }
                 } else {
-                    Text("Нет доступных веток курса")
+                    Text(NSLocalizedString("no_course_branches", comment: ""))
                         .font(.body)
                         .foregroundColor(.gray)
                 }
@@ -102,7 +102,7 @@ struct MyCourseDetailView: View {
                 Button(action: {
                     showingReviewView = true
                 }) {
-                    Text("Отзывы")
+                    Text(NSLocalizedString("reviews_button", comment: ""))
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)

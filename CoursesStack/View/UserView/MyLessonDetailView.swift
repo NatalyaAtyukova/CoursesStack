@@ -28,7 +28,7 @@ struct MyLessonDetailView: View {
                         .shadow(radius: 5)
                         .padding(.bottom, 20)
                 } else {
-                    Text("Видео не найдено")
+                    Text(NSLocalizedString("video_not_found", comment: ""))
                         .font(.headline)
                         .foregroundColor(.red)
                 }
@@ -36,7 +36,7 @@ struct MyLessonDetailView: View {
                 Divider()
                 
                 // Секция для заданий
-                Text("Задания и тесты")
+                Text(NSLocalizedString("assignments_and_tests", comment: ""))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.bottom, 8)
@@ -46,14 +46,14 @@ struct MyLessonDetailView: View {
                         AssignmentView(assignment: assignment)
                     }
                 } else {
-                    Text("Нет доступных заданий")
+                    Text(NSLocalizedString("no_assignments_available", comment: ""))
                         .font(.body)
                         .foregroundColor(.gray)
                 }
                 
                 // Секция для файлов
                 if !viewModel.lesson.downloadableFiles.isEmpty {
-                    Text("Файлы для скачивания")
+                    Text(NSLocalizedString("downloadable_files", comment: ""))
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding(.bottom, 10)

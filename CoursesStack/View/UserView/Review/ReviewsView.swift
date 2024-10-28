@@ -5,25 +5,23 @@ struct ReviewsView: View {
     @ObservedObject var viewModel: MyCourseDetailViewModel
     @State private var reviewText: String = ""
     @State private var rating: Int = 5
-    @State private var userHasLeftReview = false  // Проверка, оставил ли пользователь отзыв
-    @State private var isEditingReview = false    // Состояние для режима редактирования
-    @State private var reviewToEdit: Review? = nil // Отзыв, который редактируется
-    @State private var showDeleteConfirmation = false  // Состояние для отображения диалога удаления
+    @State private var userHasLeftReview = false
+    @State private var isEditingReview = false
+    @State private var reviewToEdit: Review? = nil
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Отзывы")
+            Text(NSLocalizedString("reviews_title", comment: "")) // Локализованный заголовок "Отзывы"
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
                 .padding(.horizontal)
                 .padding(.top)
 
-            // Если пользователь уже оставил отзыв, показываем его для редактирования
             if userHasLeftReview, let reviewToEdit = reviewToEdit {
                 editReviewFormSection
             } else {
-                // Форма для оставления нового отзыва
                 reviewFormSection
             }
 
@@ -31,24 +29,23 @@ struct ReviewsView: View {
                 .background(Color.gray)
                 .padding(.horizontal)
 
-            // Отображение списка отзывов
             if !viewModel.reviews.isEmpty {
                 ScrollView {
                     ForEach(viewModel.reviews) { review in
                         ReviewCard(review: review)
                             .contextMenu {
                                 if review.userID == Auth.auth().currentUser?.uid {
-                                    Button("Редактировать") {
+                                    Button(NSLocalizedString("edit_review_title", comment: "")) {
                                         editReview(review: review)
                                     }
                                 }
                             }
-                            .padding(.bottom, 10)  // Отступы между отзывами
+                            .padding(.bottom, 10)
                     }
                 }
                 .padding(.horizontal)
             } else {
-                Text("Отзывов пока нет")
+                Text(NSLocalizedString("no_reviews_message", comment: "")) // Локализованное сообщение "Отзывов пока нет"
                     .font(.body)
                     .foregroundColor(.gray)
                     .padding()
@@ -63,23 +60,22 @@ struct ReviewsView: View {
         }
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
-                title: Text("Удалить отзыв"),
-                message: Text("Вы уверены, что хотите удалить этот отзыв?"),
-                primaryButton: .destructive(Text("Удалить")) {
+                title: Text(NSLocalizedString("delete_review_button", comment: "")),
+                message: Text(NSLocalizedString("delete_review_confirmation", comment: "")),
+                primaryButton: .destructive(Text(NSLocalizedString("delete_button", comment: ""))) {
                     if let reviewToEdit = reviewToEdit {
                         deleteReview(review: reviewToEdit)
                     }
                 },
-                secondaryButton: .cancel()
+                secondaryButton: .cancel(Text(NSLocalizedString("cancel_button", comment: "")))
             )
         }
         .edgesIgnoringSafeArea(.all)
     }
 
-    // Форма для добавления нового отзыва
     private var reviewFormSection: some View {
         VStack(alignment: .leading) {
-            Text("Оставить отзыв")
+            Text(NSLocalizedString("leave_review_title", comment: ""))
                 .font(.headline)
                 .foregroundColor(.white)
                 .padding(.horizontal)
@@ -116,12 +112,10 @@ struct ReviewsView: View {
                     reviewText = ""
                     rating = 5
                     userHasLeftReview = true
-                    checkIfUserHasLeftReview()  // Обновляем состояние после добавления отзыва
-                } else {
-                    print("Ошибка: пользователь не авторизован.")
+                    checkIfUserHasLeftReview()
                 }
             }) {
-                Text("Отправить отзыв")
+                Text(NSLocalizedString("submit_review_button", comment: ""))
                     .font(.headline)
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -134,10 +128,9 @@ struct ReviewsView: View {
         }
     }
 
-    // Форма для редактирования отзыва
     private var editReviewFormSection: some View {
         VStack(alignment: .leading) {
-            Text("Редактировать отзыв")
+            Text(NSLocalizedString("edit_review_title", comment: ""))
                 .font(.headline)
                 .foregroundColor(.white)
                 .padding(.horizontal)
@@ -169,11 +162,10 @@ struct ReviewsView: View {
             .padding(.horizontal)
 
             HStack {
-                // Кнопка для удаления отзыва
                 Button(action: {
                     showDeleteConfirmation = true
                 }) {
-                    Text("Удалить")
+                    Text(NSLocalizedString("delete_button", comment: ""))
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -183,15 +175,14 @@ struct ReviewsView: View {
                         .shadow(radius: 5)
                 }
 
-                // Кнопка для сохранения изменений
                 Button(action: {
                     if let reviewToEdit = reviewToEdit {
                         viewModel.updateReview(review: reviewToEdit, newContent: reviewText, newRating: rating)
                         isEditingReview = false
-                        checkIfUserHasLeftReview()  // Обновляем состояние после редактирования
+                        checkIfUserHasLeftReview()
                     }
                 }) {
-                    Text("Сохранить изменения")
+                    Text(NSLocalizedString("save_changes_button", comment: ""))
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -206,7 +197,7 @@ struct ReviewsView: View {
             Button(action: {
                 isEditingReview = false
             }) {
-                Text("Отменить")
+                Text(NSLocalizedString("cancel_button", comment: ""))
                     .font(.headline)
                     .foregroundColor(.red)
                     .padding()

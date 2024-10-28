@@ -10,7 +10,7 @@ struct ContentView: View {
             if isLoading {
                 // Экран загрузки
                 VStack {
-                    ProgressView("Загрузка...")
+                    ProgressView(NSLocalizedString("loading", comment: ""))
                         .progressViewStyle(CircularProgressViewStyle(tint: .red))
                         .scaleEffect(1.5)
                 }
@@ -33,7 +33,7 @@ struct ContentView: View {
                     } else {
                         // Экран входа/регистрации
                         VStack {
-                            Text("CoursesStack")
+                            Text(NSLocalizedString("app_title", comment: ""))
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
@@ -72,14 +72,14 @@ struct ContentView: View {
     // Секция входа/регистрации
     var authSection: some View {
         VStack(spacing: 20) {
-            Text("Войдите или зарегистрируйтесь")
+            Text(NSLocalizedString("auth_prompt", comment: ""))
                 .font(.title2)
                 .foregroundColor(.white)
                 .bold()
                 .padding(.bottom, 20)
             
             NavigationLink(destination: LoginView(viewModel: viewModel)) {
-                Text("Войти")
+                Text(NSLocalizedString("login_button", comment: ""))
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
                     .background(Color(red: 235/255, green: 64/255, blue: 52/255))
@@ -89,7 +89,7 @@ struct ContentView: View {
             }
             
             NavigationLink(destination: RegisterView(viewModel: viewModel)) {
-                Text("Зарегистрироваться")
+                Text(NSLocalizedString("register_button", comment: ""))
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
                     .background(Color.black)

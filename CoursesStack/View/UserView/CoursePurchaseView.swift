@@ -47,37 +47,33 @@ struct CoursePurchaseView: View {
                     .foregroundColor(.white)
                     .padding(.bottom, 8)
                 
-                Text("Цена: \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
+                Text(String(format: NSLocalizedString("price_label", comment: "Label for course price"), viewModel.course.price, viewModel.course.currency.symbol))
                     .font(.title2)
                     .foregroundColor(Color(red: 235/255, green: 64/255, blue: 52/255))
                     .padding(.top, 8)
                 
                 Button(action: {
-                    viewModel.purchaseCourse() // Вызов метода покупки
+                    viewModel.purchaseCourse()
                 }) {
-                    Text("Купить курс за \(viewModel.course.price, specifier: "%.2f") \(viewModel.course.currency.symbol)")
+                    Text(String(format: NSLocalizedString("purchase_course_button", comment: "Button text for purchasing course"), viewModel.course.price, viewModel.course.currency.symbol))
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(red: 235/255, green: 64/255, blue: 52/255)) // Красная кнопка
+                        .background(Color(red: 235/255, green: 64/255, blue: 52/255))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
                 }
                 .padding(.top, 16)
-                .disabled(viewModel.isPurchased) // Блокировка кнопки, если курс куплен
+                .disabled(viewModel.isPurchased)
                 
                 if viewModel.isPurchased {
-                    Text("Этот курс уже куплен")
+                    Text(NSLocalizedString("course_already_purchased", comment: "Message indicating the course is already purchased"))
                         .foregroundColor(.green)
                         .padding(.top, 8)
                 }
             }
             .padding()
         }
-        .background(Color(red: 44/255, green: 44/255, blue: 46/255)) // Темный фон для экрана
+        .background(Color(red: 44/255, green: 44/255, blue: 46/255))
     }
 }
-
-
-
-

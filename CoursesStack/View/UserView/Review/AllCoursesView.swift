@@ -11,7 +11,7 @@ struct AllCoursesView: View {
                 
                 VStack {
                     if viewModel.isLoading {
-                        ProgressView("Загрузка курсов...")
+                        ProgressView(NSLocalizedString("loading_message", comment: "")) // Локализованное сообщение "Загрузка..."
                             .foregroundColor(.white)
                     } else if let error = viewModel.errorMessage {
                         Text(error)
@@ -21,7 +21,7 @@ struct AllCoursesView: View {
                             LazyVStack(spacing: 20) {
                                 if !viewModel.availableCourses.isEmpty {
                                     VStack(alignment: .leading, spacing: 10) {
-                                        Text("Доступные курсы")
+                                        Text(NSLocalizedString("available_courses_title", comment: "")) // Локализованный заголовок "Доступные курсы"
                                             .foregroundColor(.white)
                                             .font(.headline)
                                             .padding(.leading, 16)
@@ -38,7 +38,7 @@ struct AllCoursesView: View {
                                         }
                                     }
                                 } else {
-                                    Text("Нет доступных курсов для покупки.")
+                                    Text(NSLocalizedString("no_courses_available", comment: "")) // Локализованный текст "Нет доступных курсов для покупки."
                                         .foregroundColor(.gray)
                                         .font(.subheadline)
                                         .padding(.top, 20)
@@ -47,7 +47,7 @@ struct AllCoursesView: View {
                         }
                     }
                 }
-                .navigationTitle("Все курсы")
+                .navigationTitle(NSLocalizedString("all_courses_navigation_title", comment: "")) // Локализованный заголовок "Все курсы"
                 .foregroundColor(.white)
             }
             .onAppear {

@@ -43,6 +43,7 @@ struct LessonDetailView: View {
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
+                .foregroundColor(.black) // Set text color to black
                 .shadow(radius: 2)
 
             Button(action: {
@@ -70,6 +71,7 @@ struct LessonDetailView: View {
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
+                .foregroundColor(.black) // Set text color to black
                 .shadow(radius: 2)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -82,6 +84,7 @@ struct LessonDetailView: View {
                         TextField(NSLocalizedString("assignment_title_placeholder", comment: ""), text: $newAssignments[index].title) // Локализованный placeholder для названия задания
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 4)
+                            .foregroundColor(.black) // Set text color to black
                         
                         Picker(NSLocalizedString("assignment_type", comment: ""), selection: $newAssignments[index].type) { // Локализованный заголовок "Тип задания"
                             Text(NSLocalizedString("multiple_choice", comment: "")).tag(AssignmentType.multipleChoice)
@@ -95,6 +98,7 @@ struct LessonDetailView: View {
                                 HStack {
                                     TextField(String(format: NSLocalizedString("choice_placeholder", comment: ""), choiceIndex + 1), text: $newAssignments[index].choices[choiceIndex]) // Локализованный placeholder "Вариант N"
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .foregroundColor(.black) // Set text color to black
                                     
                                     Toggle(isOn: Binding<Bool>(
                                         get: {

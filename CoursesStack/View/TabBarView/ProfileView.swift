@@ -5,7 +5,7 @@ struct ProfileView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Профиль")
+            Text(NSLocalizedString("profile_title", comment: "")) // Локализованный заголовок "Профиль"
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(.white)
@@ -13,31 +13,31 @@ struct ProfileView: View {
             
             // Отображение email пользователя
             if viewModel.isAuthenticated {
-                Text("Email: \(viewModel.userEmail)")
+                Text(String(format: NSLocalizedString("email_label", comment: ""), viewModel.userEmail)) // Локализованный текст "Email:"
                     .font(.title2)
                     .foregroundColor(.white)
                     .padding()
                 
                 // Отображение имени в зависимости от роли
                 if viewModel.role == "blogger" && !viewModel.authorName.isEmpty {
-                    Text("Имя автора: \(viewModel.authorName)")
+                    Text(String(format: NSLocalizedString("author_name_label", comment: ""), viewModel.authorName)) // Локализованный текст "Имя автора:"
                         .font(.title3)
                         .foregroundColor(.white)
                         .padding(.top, 10)
                 } else if viewModel.role == "user" && !viewModel.userName.isEmpty {
-                    Text("Имя пользователя: \(viewModel.userName)")
+                    Text(String(format: NSLocalizedString("user_name_label", comment: ""), viewModel.userName)) // Локализованный текст "Имя пользователя:"
                         .font(.title3)
                         .foregroundColor(.white)
                         .padding(.top, 10)
                 } else {
-                    Text("Роль не указана или имя отсутствует.")
+                    Text(NSLocalizedString("no_role_or_name_message", comment: "")) // Локализованное сообщение "Роль не указана или имя отсутствует."
                         .font(.title3)
                         .foregroundColor(.white)
                         .padding(.top, 10)
                 }
                 
             } else {
-                Text("Вы не авторизованы")
+                Text(NSLocalizedString("not_authenticated_message", comment: "")) // Локализованное сообщение "Вы не авторизованы"
                     .font(.title2)
                     .foregroundColor(.white)
                     .padding()
@@ -47,7 +47,7 @@ struct ProfileView: View {
             Button(action: {
                 viewModel.logout()
             }) {
-                Text("Выйти")
+                Text(NSLocalizedString("logout_button", comment: "")) // Локализованная кнопка "Выйти"
                     .font(.headline)
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()

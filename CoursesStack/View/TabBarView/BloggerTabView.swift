@@ -8,21 +8,20 @@ struct BloggerTabView: View {
             BloggerDashboardView()
                 .tabItem {
                     Image(systemName: "list.bullet.clipboard.fill")
-                    Text("Мои курсы")
+                    Text(NSLocalizedString("my_courses_tab", comment: "")) // Локализованный текст "Мои курсы"
                 }
             
             CourseAccessRightsView()
                 .tabItem {
                     Image(systemName: "lock.fill")
-                    Text("Права доступа")
+                    Text(NSLocalizedString("access_rights_tab", comment: "")) // Локализованный текст "Права доступа"
                 }
 
             ProfileView(viewModel: ProfileViewModel())
                 .tabItem {
                     Image(systemName: "person.fill")
-                    Text("Профиль")
+                    Text(NSLocalizedString("profile_tab", comment: "")) // Локализованный текст "Профиль"
                 }
-
         }
         .accentColor(.red)
         .onAppear {
