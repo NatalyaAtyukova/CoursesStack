@@ -68,8 +68,18 @@ We welcome contributions! If you have ideas or suggestions, here’s how to cont
 	4.	Push to the branch (git push origin feature/my-feature).
 	5.	Open a Pull Request.
 
-License
+Screenshots
 
-This project is licensed under the MIT License. For more details, see LICENSE.
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 57 34" src="https://github.com/user-attachments/assets/462f7713-bb59-4ed9-b367-e96363e58e33">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 57 25" src="https://github.com/user-attachments/assets/9981d896-65fa-496e-9620-f53e11b139b8">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 57 22" src="https://github.com/user-attachments/assets/29334026-afb3-401a-b16b-42fa72cb12c2">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 57 17" src="https://github.com/user-attachments/assets/417863fb-1a36-4c83-a366-2196fb58b2cf">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 56 45" src="https://github.com/user-attachments/assets/fc1eac7a-cbd1-46c8-9716-d3b9cc0691a3">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 56 36" src="https://github.com/user-attachments/assets/db8b4b49-72c4-4e54-841e-8566d3d41ca8">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 51 35" src="https://github.com/user-attachments/assets/548b5e95-b7e7-483a-b57a-b9e929b9c9b1">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 51 31" src="https://github.com/user-attachments/assets/e0b3169d-64a8-49f8-84e7-79033e2def6d">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 51 26" src="https://github.com/user-attachments/assets/0754f7a0-ea89-49b1-b57f-e5441dd3ad38">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 51 20" src="https://github.com/user-attachments/assets/f59c39b6-734f-45c4-9233-043ed0a55b84">
+<img width="458" alt="Снимок экрана 2024-11-19 в 18 51 17" src="https://github.com/user-attachments/assets/0c9a0587-ed0c-4e6e-894f-2c1d44dbd78e">
 
-This README offers a structured overview that allows others to understand the app’s features, architecture, and setup, and easily start contributing.
+
